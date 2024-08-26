@@ -49,7 +49,7 @@ class _TabletMainState extends State<TabletMain> {
                   imageURL: Images.person,
                   userName: 'Admin',
                 ),
-                DashboardBody(),
+                bodyUI(sideMenuItem[1].label!),
               ],
             ),
           ),
