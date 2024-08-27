@@ -48,7 +48,7 @@ class _TabletMainState extends State<TabletMain> {
                   imageURL: Images.person,
                   userName: 'Admin',
                 ),
-                bodyUI(sideMenuItem[1].label!),
+                bodyUI(sideMenuItem[_selectedIndex].label!),
               ],
             ),
           ),

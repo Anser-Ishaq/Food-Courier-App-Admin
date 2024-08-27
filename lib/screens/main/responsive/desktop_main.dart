@@ -45,7 +45,7 @@ class _DesktopMainState extends State<DesktopMain> {
                   imageURL: Images.person,
                   userName: 'Admin',
                 ),
-                bodyUI(sideMenuItem[1].label!),
+                bodyUI(sideMenuItem[_selectedIndex].label!),
               ],
             ),
           ),

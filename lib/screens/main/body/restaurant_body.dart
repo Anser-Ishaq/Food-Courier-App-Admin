@@ -43,29 +43,24 @@ class _RestaurantBodyState extends State<RestaurantBody> {
       margin: EdgeInsets.symmetric(vertical: screenWidth! * 0.01),
       padding: EdgeInsets.all(screenWidth! * 0.007),
       decoration: BoxDecoration(
-        color: AppColors.black,
         borderRadius: BorderRadius.circular(screenWidth! * 0.005),
       ),
       child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search Restaurants...',
-              hintStyle: TextStyle(
-                color: AppColors.white.withOpacity(0.6),
-                fontSize: screenWidth! * 0.01,
-              ),
-              border: InputBorder.none,
-              prefixIcon: Icon(
-                Icons.search,
-                color: AppColors.white.withOpacity(0.6),
-                size: screenWidth! * 0.015,
-              ),
-            ),
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: screenWidth! * 0.01,
-            ),
-            cursorColor: AppColors.white,
+        decoration: InputDecoration(
+          hintText: 'Search Restaurants...',
+          hintStyle: TextStyle(
+            fontSize: screenWidth! * 0.01,
           ),
+          border: InputBorder.none,
+          prefixIcon: Icon(
+            Icons.search,
+            size: screenWidth! * 0.015,
+          ),
+        ),
+        style: TextStyle(
+          fontSize: screenWidth! * 0.01,
+        ),
+      ),
     );
   }
 
