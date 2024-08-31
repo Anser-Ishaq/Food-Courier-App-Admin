@@ -12,18 +12,14 @@ class FinancesBody extends StatefulWidget {
 class _FinancesBodyState extends State<FinancesBody> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: EdgeInsets.all(screenWidth! * 0.007),
-        padding: EdgeInsets.all(screenWidth! * 0.01),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(screenWidth! * 0.01),
-        ),
-        child: Text(
-          'Finances Screen',
-        ),
+    return Container(
+      margin: EdgeInsets.all(screenWidth! * 0.007),
+      padding: EdgeInsets.all(screenWidth! * 0.01),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(screenWidth! * 0.01),
       ),
+      child: Column(),
     );
   }
 }

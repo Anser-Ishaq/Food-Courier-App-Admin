@@ -5,14 +5,9 @@ import 'package:food_couriers_admin/screens/login/reponsive/tablet_login.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     deviceType = getDeviceType(MediaQuery.of(context).size);

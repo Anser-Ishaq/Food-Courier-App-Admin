@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:go_router/go_router.dart';
 
-class MobileMain extends StatefulWidget {
-  const MobileMain({super.key});
+class MobileMain extends StatelessWidget {
+  const MobileMain({super.key, required this.navigationShell});
 
-  @override
-  State<MobileMain> createState() => _MobileMainState();
-}
+  final StatefulNavigationShell navigationShell;
 
-class _MobileMainState extends State<MobileMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

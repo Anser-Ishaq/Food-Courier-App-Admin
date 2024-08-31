@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/screens/main/widgets/orders_chart.dart';
-import 'package:food_couriers_admin/screens/main/widgets/sales_chart.dart';
+import 'package:food_couriers_admin/screens/main/body/dashboard/widgets/orders_chart.dart';
+import 'package:food_couriers_admin/screens/main/body/dashboard/widgets/sales_chart.dart';
 import 'package:food_couriers_admin/utils.dart';
 
 class DashboardBody extends StatefulWidget {
@@ -21,35 +21,31 @@ class _DashboardBodyState extends State<DashboardBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Column(
+    return Column(
+      children: [
+        _statsRow(),
+        Row(
           children: [
-            _statsRow(),
-            Row(
-              children: [
-                _charts(
-                  flex: 1,
-                  title: 'OVERVIEW',
-                  subtitle: 'Sales',
-                  chart: SalesChart(
-                    salesData: salesData,
-                    expensesData: expensesData,
-                  ),
-                ),
-                _charts(
-                  flex: 1,
-                  title: 'PERFORMANCE',
-                  subtitle: 'Total Orders',
-                  chart: OrdersChart(
-                    monthlyOrders: monthlyOrders,
-                  ),
-                ),
-              ],
+            _charts(
+              flex: 1,
+              title: 'OVERVIEW',
+              subtitle: 'Sales',
+              chart: SalesChart(
+                salesData: salesData,
+                expensesData: expensesData,
+              ),
+            ),
+            _charts(
+              flex: 1,
+              title: 'PERFORMANCE',
+              subtitle: 'Total Orders',
+              chart: OrdersChart(
+                monthlyOrders: monthlyOrders,
+              ),
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 

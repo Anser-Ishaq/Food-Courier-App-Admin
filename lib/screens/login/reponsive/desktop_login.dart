@@ -4,9 +4,8 @@ import 'package:food_couriers_admin/components/gradient_text.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/constants/routes/routes.dart';
-import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:food_couriers_admin/utils.dart';
-import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 class DesktopLogin extends StatefulWidget {
   const DesktopLogin({super.key});
@@ -16,10 +15,6 @@ class DesktopLogin extends StatefulWidget {
 }
 
 class _DesktopLoginState extends State<DesktopLogin> {
-  final GetIt _getIt = GetIt.instance;
-
-  late NavigationService _navigationService;
-
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -29,7 +24,6 @@ class _DesktopLoginState extends State<DesktopLogin> {
   @override
   void initState() {
     super.initState();
-    _navigationService = _getIt.get<NavigationService>();
   }
 
   @override
@@ -59,7 +53,7 @@ class _DesktopLoginState extends State<DesktopLogin> {
                   bottomLeft: Radius.circular(200.r),
                 ),
               ),
-              child: _brandingUI()
+              child: _brandingUI(),
             ),
           ),
         ],
@@ -123,9 +117,11 @@ class _DesktopLoginState extends State<DesktopLogin> {
             ],
           ),
           SizedBox(height: 60.h),
-          _signinButton(onTap: () {
-            _navigationService.pushReplacementNamed(Routes.main);
-          }),
+          _signinButton(
+            onTap: () {
+              context.goNamed(Routes.home);
+            },
+          ),
           SizedBox(height: 70.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

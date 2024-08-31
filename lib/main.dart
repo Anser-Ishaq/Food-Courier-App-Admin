@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/constants/routes/routes.dart';
 import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:get_it/get_it.dart';
@@ -63,8 +62,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(1920, 1152),
       builder: (context, child) {
-        return MaterialApp(
-          navigatorKey: _navigationService.navigatorKey,
+        return MaterialApp.router(
           title: 'Food Couriers Admin',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
@@ -72,8 +70,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: primarySwatch,
             useMaterial3: true,
           ),
-          initialRoute: Routes.login,
-          routes: _navigationService.routes,
+          routerConfig: _navigationService.router,
         );
       },
     );

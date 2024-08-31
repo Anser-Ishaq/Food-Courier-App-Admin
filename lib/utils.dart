@@ -1,8 +1,10 @@
-
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/firebase_options.dart';
 import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 Future<void> setupFirebase() async {
@@ -20,6 +22,21 @@ DeviceScreenType? deviceType;
 double? screenWidth;
 double? screenHeight;
 
+TextStyle commonTextStyle(double fontSize, FontWeight fontWeight) {
+  return TextStyle(
+    fontFamily: 'DM Sans',
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    height: 1.1,
+    letterSpacing: -0.03 * fontSize,
+    color: AppColors.textDarkColor,
+  );
+}
+
+String formatDate(DateTime dateTime) {
+  return DateFormat('EEEE, MMMM d, y h:mm a').format(dateTime);
+}
+
 
 // String generateChatID({required String uid1, required String uid2}) {
 //   List uids = [uid1, uid2];
@@ -28,17 +45,3 @@ double? screenHeight;
 //   return chatID;
 // }
 
-// String formatDateTime(Timestamp dateTime) {
-//   final now = DateTime.now();
-//   final messageDate = dateTime.toDate();
-
-//   final isSameDay = now.year == messageDate.year &&
-//       now.month == messageDate.month &&
-//       now.day == messageDate.day;
-
-//   if (isSameDay) {
-//     return DateFormat('hh:mm a').format(messageDate);
-//   } else {
-//     return DateFormat('EEE, MMM d').format(messageDate);
-//   }
-// }

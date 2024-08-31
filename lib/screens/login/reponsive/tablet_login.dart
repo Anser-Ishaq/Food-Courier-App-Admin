@@ -4,9 +4,8 @@ import 'package:food_couriers_admin/components/gradient_text.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/constants/routes/routes.dart';
-import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:food_couriers_admin/utils.dart';
-import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 class TabletLogin extends StatefulWidget {
   const TabletLogin({super.key});
@@ -16,9 +15,6 @@ class TabletLogin extends StatefulWidget {
 }
 
 class _TabletLoginState extends State<TabletLogin> {
-  final GetIt _getIt = GetIt.instance;
-
-  late NavigationService _navigationService;
 
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -29,7 +25,6 @@ class _TabletLoginState extends State<TabletLogin> {
   @override
   void initState() {
     super.initState();
-    _navigationService = _getIt.get<NavigationService>();
   }
 
   @override
@@ -121,9 +116,11 @@ class _TabletLoginState extends State<TabletLogin> {
             ],
           ),
           SizedBox(height: 60.h),
-          _signinButton(onTap: () {
-            _navigationService.pushReplacementNamed(Routes.main);
-          }),
+          _signinButton(
+            onTap: () {
+              context.goNamed(Routes.home);
+            },
+          ),
           SizedBox(height: 70.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
