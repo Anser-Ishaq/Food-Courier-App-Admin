@@ -32,7 +32,7 @@ class SubSection extends StatelessWidget {
           SizedBox(height: screenHeight! * 0.03),
           Flexible(
             child: Container(
-              margin: EdgeInsets.only(left: screenWidth! * 0.01),
+              margin: EdgeInsets.only(left: screenWidth! * 0.015, right: screenWidth! * 0.01),
               child: child,
             ),
           )

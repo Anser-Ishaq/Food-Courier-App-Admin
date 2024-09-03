@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:food_couriers_admin/screens/login/auth/auth_provider.dart';
 import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 void main() async {
@@ -30,6 +32,7 @@ Future<void> setup() async {
       systemNavigationBarDividerColor: AppColors.primary,
     ),
   );
+  await setupFirebase();
   await registerServices();
 }
 
@@ -59,20 +62,25 @@ class MyApp extends StatelessWidget {
         900: Color(0xFF5A0727),
       },
     );
-    return ScreenUtilInit(
-      designSize: const Size(1920, 1152),
-      builder: (context, child) {
-        return MaterialApp.router(
-          title: 'Food Couriers Admin',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-            primarySwatch: primarySwatch,
-            useMaterial3: true,
-          ),
-          routerConfig: _navigationService.router,
-        );
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      builder: (context, child) => ScreenUtilInit(
+        designSize: const Size(1920, 1152),
+        builder: (context, child) {
+          return MaterialApp.router(
+            title: 'Food Couriers Admin Panel',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+              primarySwatch: primarySwatch,
+              useMaterial3: true,
+            ),
+            routerConfig: _navigationService.router,
+          );
+        },
+      ),
     );
   }
 }

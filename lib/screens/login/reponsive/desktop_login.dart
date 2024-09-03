@@ -4,8 +4,10 @@ import 'package:food_couriers_admin/components/gradient_text.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/constants/routes/routes.dart';
+import 'package:food_couriers_admin/screens/login/auth/auth_provider.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class DesktopLogin extends StatefulWidget {
   const DesktopLogin({super.key});
@@ -74,10 +76,6 @@ class _DesktopLoginState extends State<DesktopLogin> {
           SizedBox(height: 12.h),
           _explaingText(),
           SizedBox(height: 60.h),
-          // googleSigninButton(),
-          // SizedBox(height: 35.h),
-          // orTextRow(),
-          // SizedBox(height: 40.h),
           _labelText('Email'),
           SizedBox(height: 20.h),
           _inputContainer(
@@ -117,9 +115,40 @@ class _DesktopLoginState extends State<DesktopLogin> {
             ],
           ),
           SizedBox(height: 60.h),
-          _signinButton(
-            onTap: () {
-              context.goNamed(Routes.home);
+          Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              return Column(
+                children: [
+                  if (authProvider.errorMessage != null)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20.h),
+                      child: Text(
+                        authProvider.errorMessage!,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontFamily: 'DM Sans',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  _signinButton(
+                    onTap: authProvider.isLoading
+                        ? null
+                        : () async {
+                            if (_formKey.currentState!.validate()) {
+                              final success = await authProvider.login(
+                                _emailController.text.trim(),
+                                _passwordController.text.trim(),
+                              );
+                              if (success) {
+                                context.goNamed(Routes.home);
+                              }
+                            }
+                          },
+                  ),
+                ],
+              );
             },
           ),
           SizedBox(height: 70.h),
@@ -182,12 +211,11 @@ class _DesktopLoginState extends State<DesktopLogin> {
   }
 
   Widget _signinButton({
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // height: 54.h,
         padding: EdgeInsets.symmetric(vertical: 20.h),
         alignment: Alignment.center,
         decoration: BoxDecoration(

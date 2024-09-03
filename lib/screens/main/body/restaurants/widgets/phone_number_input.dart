@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/utils.dart';
@@ -33,7 +34,18 @@ class PhoneNumberInput extends StatelessWidget {
         SizedBox(height: screenWidth! * 0.0075),
         IntlPhoneField(
           controller: phoneController,
+          style: _textStyle(),
+          dropdownTextStyle: _textStyle(),
+          textAlignVertical: TextAlignVertical.center,
           initialCountryCode: initialCountryCode,
+          flagsButtonMargin: EdgeInsets.all(screenWidth! * 0.005),
+          dropdownIconPosition: IconPosition.trailing,
+          dropdownIcon: Icon(
+            Icons.arrow_drop_down,
+            color: AppColors.textDarkColor,
+            size: screenWidth! * 0.015,
+          ),
+          disableLengthCheck: true,
           onChanged: (phone) {
             print('Phone number changed: ${phone.completeNumber}');
           },
@@ -51,11 +63,21 @@ class PhoneNumberInput extends StatelessWidget {
               vertical: screenWidth! * 0.01,
             ),
           ),
-          style: TextStyle(
-            color: AppColors.textDarkColor,
-            fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.0115,
-            fontWeight: FontWeight.w400,
+          pickerDialogStyle: PickerDialogStyle(
+            backgroundColor: AppColors.white,
+            countryCodeStyle: _textStyle(),
+            countryNameStyle: _textStyle(),
+            width: screenWidth! * 0.55,
+            searchFieldInputDecoration: InputDecoration(
+              hintText: 'Search',
+              hintStyle: TextStyle(
+                color: AppColors.silver.withAlpha(140),
+              ),
+              border: _border(),
+              focusedBorder: _border(),
+              enabledBorder: _border(),
+            ),
+            searchFieldPadding: EdgeInsets.all(screenWidth! * 0.01)
           ),
         ),
       ],
@@ -67,6 +89,15 @@ class PhoneNumberInput extends StatelessWidget {
       borderRadius: BorderRadius.circular(screenWidth! * 0.005),
       borderSide: BorderSide(color: AppColors.primary.withOpacity(0.8)),
       gapPadding: 0,
+    );
+  }
+
+  TextStyle _textStyle() {
+    return TextStyle(
+      color: AppColors.textDarkColor.withAlpha(245),
+      fontFamily: 'DM Sans',
+      fontSize: screenWidth! * 0.0115,
+      fontWeight: FontWeight.w400,
     );
   }
 }

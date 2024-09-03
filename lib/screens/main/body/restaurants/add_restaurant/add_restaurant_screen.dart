@@ -33,7 +33,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(screenWidth! * 0.007),
-      padding: EdgeInsets.all(screenWidth! * 0.01),
+      padding: EdgeInsets.all(screenWidth! * 0.02),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(screenWidth! * 0.01),
@@ -66,6 +66,11 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
           ),
           _spacer(),
           Container(
+            margin: EdgeInsets.only(
+              left: screenWidth! * 0.025,
+              right: screenWidth! * 0.02,
+              top: screenWidth! * 0.01,
+            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(screenWidth! * 0.01),
               border: Border.all(
@@ -98,10 +103,48 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
             ),
           ),
           _spacer(),
+          _saveButton(),
+          _spacer(),
           _spacer(),
         ],
       ),
     );
+  }
+
+  Widget _saveButton() {
+    return Align(
+          alignment: Alignment.center,
+          child: GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth! * 0.015, vertical: screenWidth! * 0.005),
+              decoration: BoxDecoration(
+                gradient: AppColors.gradientPrimary,
+                borderRadius: BorderRadius.circular(screenWidth! * 0.005),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Save',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: screenWidth! * 0.015,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(width: screenWidth! * 0.005),
+                  Icon(
+                    Icons.save_rounded,
+                    color: AppColors.white,
+                    size: screenWidth! * 0.017,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
   }
 
   SizedBox _spacer() {

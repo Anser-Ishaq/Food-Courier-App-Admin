@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/firebase_options.dart';
+import 'package:food_couriers_admin/services/auth_service.dart';
 import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +16,9 @@ Future<void> registerServices() async {
   final GetIt getIt = GetIt.instance;
   getIt.registerSingleton<NavigationService>(
     NavigationService(),
+  );
+  getIt.registerSingleton<AuthService>(
+    AuthService(),
   );
 }
 
