@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/constants/routes/routes.dart';
+import 'package:food_couriers_admin/provider/userdata_provider.dart';
 import 'package:food_couriers_admin/screens/main/models/side_menu_model.dart';
 import 'package:food_couriers_admin/screens/main/widgets/header.dart';
 import 'package:food_couriers_admin/screens/main/menu/side_menu.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class TabletMain extends StatelessWidget {
   const TabletMain({super.key, required this.navigationShell});
@@ -50,11 +52,16 @@ class TabletMain extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Header(
-                    screen: screenName,
-                    imageURL: Images.person,
-                    userName: 'Admin',
-                    showScreen: showScreen,
+                  Consumer<UserdataProvider>(
+                    builder: (context, userdataProvider, child) {
+                      final user = userdataProvider.currentUser;
+                      return Header(
+                        screen: screenName,
+                        imageURL: user?.imageURL ?? Images.person,
+                        userName: user?.name ?? '',
+                        showScreen: showScreen,
+                      );
+                    }
                   ),
                   navigationShell,
                   SizedBox(height: screenWidth! * 0.075),

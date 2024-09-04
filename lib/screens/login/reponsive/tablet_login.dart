@@ -4,8 +4,10 @@ import 'package:food_couriers_admin/components/gradient_text.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/constants/routes/routes.dart';
+import 'package:food_couriers_admin/provider/auth_provider.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class TabletLogin extends StatefulWidget {
   const TabletLogin({super.key});
@@ -15,17 +17,7 @@ class TabletLogin extends StatefulWidget {
 }
 
 class _TabletLoginState extends State<TabletLogin> {
-
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isPasswordVisible = true;
-  bool? _rememberMe = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +28,8 @@ class _TabletLoginState extends State<TabletLogin> {
           children: [
             Container(
               height: MediaQuery.of(context).size.height,
-              padding: EdgeInsets.only(
-                left: screenWidth! * 0.15,
-                right: screenWidth! * 0.15,
-                top: 40.h,
-              ),
-              color: AppColors.white.withOpacity(0.4),
-              child: _formUI(),
+              padding: EdgeInsets.symmetric(horizontal: 150.w, vertical: 40.h),
+              child: _formUI(context),
             ),
             Container(
               height: MediaQuery.of(context).size.width * 0.7,
@@ -61,7 +48,9 @@ class _TabletLoginState extends State<TabletLogin> {
     );
   }
 
-  Widget _formUI() {
+  Widget _formUI(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Form(
       key: _formKey,
       child: Column(
@@ -73,31 +62,41 @@ class _TabletLoginState extends State<TabletLogin> {
           SizedBox(height: 12.h),
           _explaingText(),
           SizedBox(height: 60.h),
-          // _googleSigninButton(onTap: () {}),
-          // SizedBox(height: 35.h),
-          // _orTextRow(),
-          // SizedBox(height: 40.h),
           _labelText('Email'),
           SizedBox(height: 20.h),
           _inputContainer(
             hintText: 'mail@simmmple.com',
-            controller: _emailController,
+            controller: authProvider.emailController,
             obscureText: false,
             keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                return 'Please enter a valid email address';
+              }
+              return null;
+            },
           ),
           SizedBox(height: 30.h),
           _labelText('Password'),
           SizedBox(height: 20.h),
           _inputContainer(
             hintText: 'Min. 8 characters',
-            controller: _passwordController,
-            obscureText: _isPasswordVisible,
+            controller: authProvider.passwordController,
+            obscureText: authProvider.isPasswordVisible,
             keyboardType: TextInputType.visiblePassword,
             isIcon: true,
-            onTap: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
+            onTap: authProvider.togglePasswordVisibility,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              if (value.length < 8) {
+                return 'Password must be at least 8 characters long';
+              }
+              return null;
             },
           ),
           SizedBox(height: 40.h),
@@ -105,21 +104,44 @@ class _TabletLoginState extends State<TabletLogin> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _rememberMeRow(
-                value: _rememberMe,
-                onChanged: (value) {
-                  setState(() {
-                    _rememberMe = value;
-                  });
-                },
+                value: authProvider.rememberMe,
+                onChanged: authProvider.setRememberMe,
               ),
               _forgotPasswordText(onTap: () {}),
             ],
           ),
           SizedBox(height: 60.h),
-          _signinButton(
-            onTap: () {
-              context.goNamed(Routes.home);
-            },
+          Column(
+            children: [
+              if (authProvider.errorMessage != null)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20.h),
+                  child: Text(
+                    authProvider.errorMessage!,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontFamily: 'DM Sans',
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              _signinButton(
+                onTap: authProvider.isLoading
+                    ? null
+                    : () async {
+                        if (_formKey.currentState!.validate()) {
+                          final success = await authProvider.login(
+                            authProvider.emailController.text.trim(),
+                            authProvider.passwordController.text.trim(),
+                          );
+                          if (success) {
+                            context.goNamed(Routes.home);
+                          }
+                        }
+                      },
+              ),
+            ],
           ),
           SizedBox(height: 70.h),
           Row(
@@ -145,7 +167,6 @@ class _TabletLoginState extends State<TabletLogin> {
               ),
             ],
           ),
-          // SizedBox(height: 190.h),
         ],
       ),
     );
@@ -168,9 +189,9 @@ class _TabletLoginState extends State<TabletLogin> {
         ),
         child: GradientText(
           text: text,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.025,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.02 * 14,
           ),
@@ -181,28 +202,41 @@ class _TabletLoginState extends State<TabletLogin> {
   }
 
   Widget _signinButton({
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // height: 54.h,
         padding: EdgeInsets.symmetric(vertical: 20.h),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           gradient: AppColors.gradientPrimary,
           borderRadius: BorderRadius.circular(16.r),
         ),
-        child: Text(
-          'Sign In',
-          style: TextStyle(
-            color: AppColors.white,
-            fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.027,
-            fontWeight: FontWeight.w700,
-            height: 1.2,
-            letterSpacing: -0.02 * 14,
-          ),
+        child: Consumer<AuthProvider>(
+          builder: (context, authProvider, child) {
+            return authProvider.isLoading
+                ? SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.w,
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(AppColors.white),
+                    ),
+                  )
+                : Text(
+                    'Sign In',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontFamily: 'DM Sans',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      height: 14.h / 14,
+                      letterSpacing: -0.02 * 14,
+                    ),
+                  );
+          },
         ),
       ),
     );
@@ -218,9 +252,9 @@ class _TabletLoginState extends State<TabletLogin> {
         style: TextStyle(
           color: AppColors.primary,
           fontFamily: 'DM Sans',
-          fontSize: screenWidth! * 0.025,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
-          height: 1.2,
+          height: 20.h / 14,
           letterSpacing: -0.02 * 14,
         ),
       ),
@@ -234,23 +268,20 @@ class _TabletLoginState extends State<TabletLogin> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 2.0),
-          child: Checkbox(
-            value: value,
-            onChanged: onChanged,
-            splashRadius: 0.1,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
+        Checkbox(
+          value: value,
+          onChanged: onChanged,
+          splashRadius: 0.1,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         Text(
           'Keep me logged in',
           style: TextStyle(
             color: AppColors.textDarkColor,
             fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.025,
+            fontSize: 14,
             fontWeight: FontWeight.w400,
-            height: 1.2,
+            height: 20.h / 14,
             letterSpacing: -0.02 * 14,
           ),
         ),
@@ -265,6 +296,7 @@ class _TabletLoginState extends State<TabletLogin> {
     required TextInputType keyboardType,
     bool? isIcon,
     VoidCallback? onTap,
+    String? Function(String?)? validator,
   }) {
     OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(16.r),
@@ -282,10 +314,12 @@ class _TabletLoginState extends State<TabletLogin> {
         style: TextStyle(
           color: AppColors.textDarkColor,
           fontFamily: 'DM Sans',
-          fontSize: screenWidth! * 0.025,
+          fontSize: 14,
           fontWeight: FontWeight.w400,
+          height: 14.h / 14,
           letterSpacing: -0.02 * 14,
         ),
+        validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: const TextStyle(
@@ -296,143 +330,48 @@ class _TabletLoginState extends State<TabletLogin> {
               ? GestureDetector(
                   onTap: onTap,
                   child: Icon(
-                    obscureText
-                        ? Icons.visibility_off_rounded
-                        : Icons.visibility_rounded,
-                    size: 18,
+                    obscureText ? Icons.visibility_off : Icons.visibility,
                     color: AppColors.silver,
                   ),
                 )
               : null,
           border: border,
-          focusedBorder: border,
           enabledBorder: border,
-        ),
-      ),
-    );
-  }
-
-  Widget _labelText(String label) {
-    return RichText(
-      text: TextSpan(
-        style: TextStyle(
-          fontFamily: 'DM Sans',
-          fontSize: screenWidth! * 0.025,
-          fontWeight: FontWeight.w500,
-          height: 1,
-          letterSpacing: -0.02 * 14,
-        ),
-        children: [
-          TextSpan(
-            text: label,
-            style: const TextStyle(
-              color: AppColors.textDarkColor,
-            ),
-          ),
-          const TextSpan(
-            text: '*',
-            style: TextStyle(
+          focusedBorder: border.copyWith(
+            borderSide: BorderSide(
               color: AppColors.primary,
+              width: 1.5.w,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _orTextRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _divider(),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 10.w),
-          child: Text(
-            'or',
-            style: TextStyle(
-              color: AppColors.silver,
-              fontFamily: 'DM Sans',
-              fontSize: screenWidth! / 35,
-              fontWeight: FontWeight.w500,
-              height: 1,
-              letterSpacing: -0.02 * 14,
-            ),
-          ),
-        ),
-        _divider(),
-      ],
-    );
-  }
-
-  Widget _divider() {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(1.r),
-          border: Border.all(
-            color: AppColors.borderColor,
-            width: 0.5,
           ),
         ),
       ),
     );
   }
 
-  Widget _googleSigninButton({
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        // height: 54.h,
-        padding: EdgeInsets.symmetric(vertical: 15.h),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          gradient: AppColors.gradientSecondary,
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Image.asset(
-              Images.google,
-              width: 27.w,
-              height: 27.h,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(width: 11.w),
-            const Text(
-              'Sign in with Google',
-              style: TextStyle(
-                color: AppColors.textDarkColor,
-                fontFamily: 'DM Sans',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                height: 1.2,
-                letterSpacing: -0.02 * 14,
-              ),
-            ),
-          ],
-        ),
+  Widget _labelText(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: AppColors.textDarkColor,
+        fontFamily: 'DM Sans',
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        height: 16.h / 14,
+        letterSpacing: -0.02 * 14,
       ),
     );
   }
 
   Widget _explaingText() {
-    return Padding(
-      padding: EdgeInsets.only(left: 1.w),
-      child: Text(
-        'Enter your email and password to sign in!',
-        maxLines: 1,
-        style: TextStyle(
-          color: AppColors.silver,
-          fontFamily: 'DM Sans',
-          fontSize: screenWidth! * 0.02,
-          fontWeight: FontWeight.w400,
-          height: 1.1,
-          letterSpacing: -0.02 * 16,
-        ),
+    return Text(
+      'Enter your email and password to sign in!',
+      style: TextStyle(
+        color: AppColors.silver,
+        fontFamily: 'DM Sans',
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 20.h / 14,
+        letterSpacing: -0.02 * 14,
       ),
     );
   }
@@ -443,9 +382,9 @@ class _TabletLoginState extends State<TabletLogin> {
       style: TextStyle(
         color: AppColors.textDarkColor,
         fontFamily: 'DM Sans',
-        fontSize: screenWidth! * 0.06,
+        fontSize: screenWidth! / 15,
         fontWeight: FontWeight.w700,
-        height: 1.1,
+        height: 56.h / 36,
         letterSpacing: -0.02 * 36,
       ),
     );
@@ -472,7 +411,7 @@ class _TabletLoginState extends State<TabletLogin> {
               fontFamily: 'DM Sans',
               fontSize: screenWidth! * 0.02,
               fontWeight: FontWeight.w500,
-              height: 1,
+              height: 30.h / 14,
               letterSpacing: -0.02 * 14,
             ),
           ),
@@ -502,6 +441,9 @@ class _TabletLoginState extends State<TabletLogin> {
             fontWeight: FontWeight.w400,
             fontSize: 30,
           ),
+        ),
+        SizedBox(
+          height: 0.02 * screenWidth!,
         ),
         Container(
           margin: EdgeInsets.symmetric(

@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/screens/login/auth/auth_provider.dart';
+import 'package:food_couriers_admin/provider/auth_provider.dart';
+import 'package:food_couriers_admin/provider/userdata_provider.dart';
 import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:get_it/get_it.dart';
@@ -19,7 +20,7 @@ void main() async {
 Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-    ResponsiveSizingConfig.instance.setCustomBreakpoints(
+  ResponsiveSizingConfig.instance.setCustomBreakpoints(
     const ScreenBreakpoints(desktop: 1025, tablet: 501, watch: 201),
   );
   SystemChrome.setSystemUIOverlayStyle(
@@ -62,25 +63,29 @@ class MyApp extends StatelessWidget {
         900: Color(0xFF5A0727),
       },
     );
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-      ],
-      builder: (context, child) => ScreenUtilInit(
-        designSize: const Size(1920, 1152),
-        builder: (context, child) {
-          return MaterialApp.router(
-            title: 'Food Couriers Admin Panel',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-              primarySwatch: primarySwatch,
-              useMaterial3: true,
-            ),
-            routerConfig: _navigationService.router,
-          );
-        },
-      ),
+return MultiProvider(
+  providers: [
+    ChangeNotifierProvider(create: (_) => AuthProvider()),
+    ChangeNotifierProvider(create: (_) => UserdataProvider()),
+  ],
+  builder: (context, child) {
+    return ScreenUtilInit(
+      designSize: const Size(1920, 1152),
+      builder: (context, child) {
+        return MaterialApp.router(
+          title: 'Food Couriers Admin',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+            primarySwatch: primarySwatch,
+            useMaterial3: true,
+          ),
+          routerConfig: _navigationService.router,
+        );
+      },
     );
+  },
+);
+
   }
 }

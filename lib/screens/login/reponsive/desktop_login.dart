@@ -4,7 +4,7 @@ import 'package:food_couriers_admin/components/gradient_text.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/constants/routes/routes.dart';
-import 'package:food_couriers_admin/screens/login/auth/auth_provider.dart';
+import 'package:food_couriers_admin/provider/auth_provider.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -18,15 +18,6 @@ class DesktopLogin extends StatefulWidget {
 
 class _DesktopLoginState extends State<DesktopLogin> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isPasswordVisible = true;
-  bool? _rememberMe = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +34,7 @@ class _DesktopLoginState extends State<DesktopLogin> {
                 right: 170.w,
                 top: 40.h,
               ),
-              child: _formUI(),
+              child: _formUI(context),
             ),
           ),
           Expanded(
@@ -63,7 +54,9 @@ class _DesktopLoginState extends State<DesktopLogin> {
     );
   }
 
-  Widget _formUI() {
+  Widget _formUI(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Form(
       key: _formKey,
       child: Column(
@@ -80,23 +73,37 @@ class _DesktopLoginState extends State<DesktopLogin> {
           SizedBox(height: 20.h),
           _inputContainer(
             hintText: 'mail@simmmple.com',
-            controller: _emailController,
+            controller: authProvider.emailController,
             obscureText: false,
             keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                return 'Please enter a valid email address';
+              }
+              return null;
+            },
           ),
           SizedBox(height: 30.h),
           _labelText('Password'),
           SizedBox(height: 20.h),
           _inputContainer(
             hintText: 'Min. 8 characters',
-            controller: _passwordController,
-            obscureText: _isPasswordVisible,
+            controller: authProvider.passwordController,
+            obscureText: authProvider.isPasswordVisible,
             keyboardType: TextInputType.visiblePassword,
             isIcon: true,
-            onTap: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
+            onTap: authProvider.togglePasswordVisibility,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              if (value.length < 8) {
+                return 'Password must be at least 8 characters long';
+              }
+              return null;
             },
           ),
           SizedBox(height: 40.h),
@@ -104,52 +111,44 @@ class _DesktopLoginState extends State<DesktopLogin> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _rememberMeRow(
-                value: _rememberMe,
-                onChanged: (value) {
-                  setState(() {
-                    _rememberMe = value;
-                  });
-                },
+                value: authProvider.rememberMe,
+                onChanged: authProvider.setRememberMe,
               ),
               _forgotPasswordText(onTap: () {}),
             ],
           ),
           SizedBox(height: 60.h),
-          Consumer<AuthProvider>(
-            builder: (context, authProvider, child) {
-              return Column(
-                children: [
-                  if (authProvider.errorMessage != null)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20.h),
-                      child: Text(
-                        authProvider.errorMessage!,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontFamily: 'DM Sans',
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+          Column(
+            children: [
+              if (authProvider.errorMessage != null)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20.h),
+                  child: Text(
+                    authProvider.errorMessage!,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontFamily: 'DM Sans',
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
                     ),
-                  _signinButton(
-                    onTap: authProvider.isLoading
-                        ? null
-                        : () async {
-                            if (_formKey.currentState!.validate()) {
-                              final success = await authProvider.login(
-                                _emailController.text.trim(),
-                                _passwordController.text.trim(),
-                              );
-                              if (success) {
-                                context.goNamed(Routes.home);
-                              }
-                            }
-                          },
                   ),
-                ],
-              );
-            },
+                ),
+              _signinButton(
+                onTap: authProvider.isLoading
+                    ? null
+                    : () async {
+                        if (_formKey.currentState!.validate()) {
+                          final success = await authProvider.login(
+                            authProvider.emailController.text.trim(),
+                            authProvider.passwordController.text.trim(),
+                          );
+                          if (success) {
+                            context.goNamed(Routes.home);
+                          }
+                        }
+                      },
+              ),
+            ],
           ),
           SizedBox(height: 70.h),
           Row(
@@ -210,32 +209,45 @@ class _DesktopLoginState extends State<DesktopLogin> {
     );
   }
 
-  Widget _signinButton({
-    required VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.h),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          gradient: AppColors.gradientPrimary,
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Text(
-          'Sign In',
-          style: TextStyle(
-            color: AppColors.white,
-            fontFamily: 'DM Sans',
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            height: 14.h / 14,
-            letterSpacing: -0.02 * 14,
-          ),
-        ),
+Widget _signinButton({
+  required VoidCallback? onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: EdgeInsets.symmetric(vertical: 20.h),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        gradient: AppColors.gradientPrimary,
+        borderRadius: BorderRadius.circular(16.r),
       ),
-    );
-  }
+      child: Consumer<AuthProvider>(
+        builder: (context, authProvider, child) {
+          return authProvider.isLoading
+              ? SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.w,
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.white),
+                  ),
+              )
+              : Text(
+                  'Sign In',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'DM Sans',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    height: 14.h / 14,
+                    letterSpacing: -0.02 * 14,
+                  ),
+                );
+        },
+      ),
+    ),
+  );
+}
 
   Widget _forgotPasswordText({
     required VoidCallback onTap,
@@ -291,6 +303,7 @@ class _DesktopLoginState extends State<DesktopLogin> {
     required TextInputType keyboardType,
     bool? isIcon,
     VoidCallback? onTap,
+    String? Function(String?)? validator,
   }) {
     OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(16.r),
@@ -305,6 +318,7 @@ class _DesktopLoginState extends State<DesktopLogin> {
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
+        validator: validator,
         style: const TextStyle(
           color: AppColors.textDarkColor,
           fontFamily: 'DM Sans',
