@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  final String? uid;
-  final String? name;
-  final String? email;
-  final String? role;
-  final String? phone;
-  final String? imageURL;
-  final Timestamp? createAt;
-  final String? status;
+  String? uid;
+  String? name;
+  String? email;
+  String? role;
+  String? phone;
+  String? imageURL;
+  Timestamp? createAt;
+  String? status;
+  List<String>? restaurantIDs;
 
   UserModel({
     this.uid,
@@ -19,6 +20,7 @@ class UserModel {
     this.imageURL,
     this.createAt,
     this.status,
+    this.restaurantIDs,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class UserModel {
       imageURL: json['imageURL'],
       createAt: json['createAt'],
       status: json['status'],
+      restaurantIDs: (json['restaurantIDs'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
   }
 
@@ -44,6 +47,7 @@ class UserModel {
     data['imageURL'] = imageURL;
     data['createAt'] = createAt;
     data['status'] = status;
+    data['restaurantIDs'] = restaurantIDs;
     return data;
   }
 }

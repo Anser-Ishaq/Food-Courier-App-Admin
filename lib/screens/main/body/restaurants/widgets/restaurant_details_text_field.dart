@@ -6,11 +6,11 @@ class RestaurantDetailsTextField extends StatelessWidget {
   const RestaurantDetailsTextField({
     super.key,
     required this.title,
-    required this.textEditingController,
+    this.onSaved,
   });
 
   final String title;
-  final TextEditingController textEditingController;
+  final void Function(String?)? onSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +28,8 @@ class RestaurantDetailsTextField extends StatelessWidget {
           ),
         ),
         SizedBox(height: screenWidth! * 0.0075),
-        TextField(
-          controller: textEditingController,
+        TextFormField(
+          onSaved: onSaved,
           style: TextStyle(
             color: AppColors.textDarkColor,
             fontFamily: 'DM Sans',
@@ -37,16 +37,17 @@ class RestaurantDetailsTextField extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
           decoration: InputDecoration(
-            hintText: title,
-            hintStyle: TextStyle(
-              color: AppColors.silver.withAlpha(140),
-            ),
-            isCollapsed: true,
-            border: border(),
-            focusedBorder: border(),
-            enabledBorder: border(),
-            contentPadding: EdgeInsets.symmetric(horizontal: screenWidth! * 0.01, vertical: screenWidth! * 0.01)
-          ),
+              hintText: title,
+              hintStyle: TextStyle(
+                color: AppColors.silver.withAlpha(140),
+              ),
+              isCollapsed: true,
+              border: border(),
+              focusedBorder: border(),
+              enabledBorder: border(),
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: screenWidth! * 0.01,
+                  vertical: screenWidth! * 0.01)),
         ),
       ],
     );

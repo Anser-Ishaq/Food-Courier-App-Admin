@@ -7,4 +7,5 @@ class Routes {
   static const String support = 'support';
   static const String users = 'users';
   static const String addRestaurant = 'add_restaurant';
+  static const String editRestaurant= 'edit_restaurant';
 }

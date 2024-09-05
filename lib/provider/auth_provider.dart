@@ -35,6 +35,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   void _initializeAuthState() async {
+    _user = _authService.currentUser;
     _authService.authStateChanges.listen(authStateChangesStreamListener);
   }
 
@@ -67,6 +68,12 @@ class AuthProvider with ChangeNotifier {
       _setLoading(false);
     }
     return false;
+  }
+
+  Future<void> logout() async {
+    await _authService.signOut();
+    _setUser(null);
+    notifyListeners();
   }
 
   void _saveCredentials(String email, String password) async {
@@ -110,10 +117,10 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // @override
-  // void dispose() {
-  //   _emailController.dispose();
-  //   _passwordController.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 }

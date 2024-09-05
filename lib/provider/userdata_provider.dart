@@ -27,15 +27,12 @@ class UserdataProvider with ChangeNotifier {
   void getUser(BuildContext context) async {
     _setLoading(true);
     try {
-      final user = Provider.of<AuthProvider>(context, listen: false).user;
-      print(user);
-      print(2);
-      if (user != null) {
-        final user1 = await _databaseService.getUser(uid: user.uid);
-        print(user1!.name);
-        print('1');
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-        _setCurrentUser(user1);
+      if (authProvider.user != null) {
+        final user = await _databaseService.getUser(uid: authProvider.user!.uid);
+
+        _setCurrentUser(user);
       }
     } catch (e) {
       _handleError(e);

@@ -3,17 +3,18 @@ import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/utils.dart';
+import 'package:intl_phone_field/phone_number.dart';
 
 class PhoneNumberInput extends StatelessWidget {
   final String title;
-  final TextEditingController phoneController;
   final String initialCountryCode;
+  final void Function(PhoneNumber?)? onSaved;
 
   const PhoneNumberInput({
     super.key,
     required this.title,
-    required this.phoneController,
     this.initialCountryCode = 'PK',
+    this.onSaved,
   });
 
   @override
@@ -33,7 +34,6 @@ class PhoneNumberInput extends StatelessWidget {
         ),
         SizedBox(height: screenWidth! * 0.0075),
         IntlPhoneField(
-          controller: phoneController,
           style: _textStyle(),
           dropdownTextStyle: _textStyle(),
           textAlignVertical: TextAlignVertical.center,
@@ -46,9 +46,7 @@ class PhoneNumberInput extends StatelessWidget {
             size: screenWidth! * 0.015,
           ),
           disableLengthCheck: true,
-          onChanged: (phone) {
-            print('Phone number changed: ${phone.completeNumber}');
-          },
+          onSaved: onSaved,
           decoration: InputDecoration(
             hintText: title,
             hintStyle: TextStyle(
@@ -64,21 +62,20 @@ class PhoneNumberInput extends StatelessWidget {
             ),
           ),
           pickerDialogStyle: PickerDialogStyle(
-            backgroundColor: AppColors.white,
-            countryCodeStyle: _textStyle(),
-            countryNameStyle: _textStyle(),
-            width: screenWidth! * 0.55,
-            searchFieldInputDecoration: InputDecoration(
-              hintText: 'Search',
-              hintStyle: TextStyle(
-                color: AppColors.silver.withAlpha(140),
+              backgroundColor: AppColors.white,
+              countryCodeStyle: _textStyle(),
+              countryNameStyle: _textStyle(),
+              width: screenWidth! * 0.55,
+              searchFieldInputDecoration: InputDecoration(
+                hintText: 'Search',
+                hintStyle: TextStyle(
+                  color: AppColors.silver.withAlpha(140),
+                ),
+                border: _border(),
+                focusedBorder: _border(),
+                enabledBorder: _border(),
               ),
-              border: _border(),
-              focusedBorder: _border(),
-              enabledBorder: _border(),
-            ),
-            searchFieldPadding: EdgeInsets.all(screenWidth! * 0.01)
-          ),
+              searchFieldPadding: EdgeInsets.all(screenWidth! * 0.01)),
         ),
       ],
     );

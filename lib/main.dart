@@ -4,6 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/provider/auth_provider.dart';
+import 'package:food_couriers_admin/provider/ownerdata_provider.dart';
+import 'package:food_couriers_admin/provider/restaurant_provider.dart';
 import 'package:food_couriers_admin/provider/userdata_provider.dart';
 import 'package:food_couriers_admin/services/navigation_service.dart';
 import 'package:food_couriers_admin/utils.dart';
@@ -67,6 +69,8 @@ return MultiProvider(
   providers: [
     ChangeNotifierProvider(create: (_) => AuthProvider()),
     ChangeNotifierProvider(create: (_) => UserdataProvider()),
+    ChangeNotifierProvider(create: (_) => OwnerdataProvider()),
+    ChangeNotifierProvider(create: (_) => RestaurantProvider()),
   ],
   builder: (context, child) {
     return ScreenUtilInit(

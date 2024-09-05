@@ -1,5 +1,6 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/models/restaurant.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/utils.dart';
@@ -142,7 +143,7 @@ class _RestaurantSearchState extends State<RestaurantSearch> {
                       commonTextStyle(screenWidth! * 0.0085, FontWeight.w300),
         ),
         leading: CircleAvatar(
-          backgroundImage: AssetImage(restaurant.logo ?? ''),
+          backgroundImage: AssetImage(restaurant.logo ?? Images.icon),
           radius: screenWidth! * 0.0125,
         ),
       ),

@@ -38,49 +38,63 @@ class _DesktopMainState extends State<DesktopMain> {
         GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
 
     if (widget.navigationShell.currentIndex == 1 &&
-        currentLocation == '/${Routes.restaurant}/${Routes.addRestaurant}') {
+        (currentLocation == '/${Routes.restaurant}/${Routes.addRestaurant}' ||
+            currentLocation
+                .contains('/${Routes.restaurant}/${Routes.editRestaurant}'))) {
       showScreen = false;
-      screenName = "Add Restaurant";
+      screenName = currentLocation
+              .contains('/${Routes.restaurant}/${Routes.editRestaurant}')
+          ? "Edit Restaurant"
+          : "Add Restaurant";
     }
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: screenWidth! * 0.18,
-            color: AppColors.white,
-            child: SideMenu(
-              selectedIndex: widget.navigationShell.currentIndex,
-              onTapSideMenuItem: widget.navigationShell.goBranch,
-              sideMenuItem: sideMenuItem,
-              version: 'VERSION 4.0.4',
-              versionDateTime: '2024-09-22 03:31:30',
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Consumer<UserdataProvider>(
-                    builder: (context, userdataProvider, child) {
-                      final user = userdataProvider.currentUser;
-                      return Header(
+      body: Consumer<UserdataProvider>(
+        builder: (context, userdataProvider, child) {
+          if (userdataProvider.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(
+                strokeWidth: screenWidth! * 0.0025,
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
+            );
+          }
+          final user = userdataProvider.currentUser;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: screenWidth! * 0.18,
+                color: AppColors.white,
+                child: SideMenu(
+                  selectedIndex: widget.navigationShell.currentIndex,
+                  onTapSideMenuItem: widget.navigationShell.goBranch,
+                  sideMenuItem: sideMenuItem,
+                  version: 'VERSION 4.0.4',
+                  versionDateTime: '2024-09-22 03:31:30',
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Header(
                         screen: screenName,
                         imageURL: user?.imageURL ?? Images.person,
                         userName: user?.name ?? '',
                         showScreen: showScreen,
-                      );
-                    },
+                      ),
+                      widget.navigationShell,
+                      SizedBox(height: screenWidth! * 0.075),
+                    ],
                   ),
-                  widget.navigationShell,
-                  SizedBox(height: screenWidth! * 0.075),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }

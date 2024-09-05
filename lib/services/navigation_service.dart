@@ -4,6 +4,7 @@ import 'package:food_couriers_admin/screens/main/body/restaurants/add_restaurant
 import 'package:food_couriers_admin/screens/login/login_screen.dart';
 import 'package:food_couriers_admin/screens/main/body/dashboard/dashboard_body.dart';
 import 'package:food_couriers_admin/screens/main/body/finances/finances_body.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/edit_restaurant_screen.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/restaurant_body.dart';
 import 'package:food_couriers_admin/screens/main/body/support/support_body.dart';
 import 'package:food_couriers_admin/screens/main/body/users/users_body.dart';
@@ -55,6 +56,14 @@ class NavigationService {
                     path: Routes.addRestaurant,
                     builder: (context, state) {
                       return const AddRestaurantScreen();
+                    },
+                  ),
+                  GoRoute(
+                    name: Routes.editRestaurant,
+                    path: '${Routes.editRestaurant}/:rid',
+                    builder: (context, state) {
+                      final rid = state.pathParameters['rid']!;
+                      return EditRestaurantScreen(rid: rid);
                     },
                   ),
                 ],

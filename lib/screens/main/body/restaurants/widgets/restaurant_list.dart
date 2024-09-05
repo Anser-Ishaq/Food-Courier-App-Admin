@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/components/hover.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:food_couriers_admin/constants/images/images.dart';
 import 'package:food_couriers_admin/models/restaurant.dart';
 import 'package:food_couriers_admin/utils.dart';
 
@@ -8,11 +9,15 @@ class RestaurantList extends StatelessWidget {
   const RestaurantList({
     super.key,
     required this.restaurants,
+    required this.onTapEdit,
     required this.onTapActive,
+    required this.onTapDelete,
   });
 
   final List<Restaurant> restaurants;
+  final void Function(Restaurant) onTapEdit;
   final void Function(Restaurant) onTapActive;
+  final void Function(Restaurant) onTapDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +65,7 @@ class RestaurantList extends StatelessWidget {
         children: [
           _buildExpandedText(flex: 5, text: restaurant.name ?? ''),
           _buildSpacing(),
-          _buildLogo(restaurant.logo ?? ''),
+          _buildLogo(restaurant.logo ?? Images.icon),
           _buildSpacing(),
           _buildExpandedText(flex: 3, text: restaurant.ownerName ?? ''),
           _buildSpacing(),
@@ -68,10 +73,10 @@ class RestaurantList extends StatelessWidget {
           _buildSpacing(),
           _buildExpandedText(
             flex: 7,
-            text: formatDate(restaurant.creationDate!),
+            text: formatDate(restaurant.creationDate!.toDate()),
           ),
           _buildSpacing(),
-          _buildStatusIndicator(restaurant.active ?? false),
+          _buildStatusIndicator(restaurant.active),
           _buildSpacing(),
           _buildActionMenu(restaurant),
         ],
@@ -194,7 +199,7 @@ class RestaurantList extends StatelessWidget {
                 onSelected: (value) {
                   switch (value) {
                     case 'edit':
-                      // Handle edit action
+                      onTapEdit(restaurant);
                       break;
                     case 'login_as':
                       // Handle login as action
@@ -204,7 +209,7 @@ class RestaurantList extends StatelessWidget {
                       onTapActive(restaurant);
                       break;
                     case 'delete':
-                      // Handle delete action
+                      onTapDelete(restaurant);
                       break;
                   }
                 },
@@ -229,9 +234,9 @@ class RestaurantList extends StatelessWidget {
                   ),
                   PopupMenuItem<String>(
                     height: screenWidth! * 0.025,
-                    value: restaurant.active! ? 'Deactivate' : 'Activate',
+                    value: restaurant.active ? 'Deactivate' : 'Activate',
                     child: Text(
-                      restaurant.active! ? 'Deactivate' : 'Activate',
+                      restaurant.active ? 'Deactivate' : 'Activate',
                       style:
                           commonTextStyle(screenWidth! * 0.01, FontWeight.w500),
                     ),
