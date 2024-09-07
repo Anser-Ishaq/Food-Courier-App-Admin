@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/constants/routes/routes.dart';
 import 'package:food_couriers_admin/models/restaurant.dart';
+import 'package:food_couriers_admin/provider/ownerdata_provider.dart';
 import 'package:food_couriers_admin/provider/restaurant_provider.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/restaurant_head.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/restaurant_list.dart';
@@ -73,6 +74,7 @@ class _RestaurantBodyState extends State<RestaurantBody> {
                 restaurantProvider.updateRestaurant(restaurant);
               },
               onTapDelete: (Restaurant restaurant) {
+                Provider.of<OwnerdataProvider>(context, listen: false).updateOwner(uid: restaurant.oid!, existingRestaurantID: restaurant.rid!);
                 restaurantProvider.deleteRestaurant(restaurant.rid!);
               },
             ),

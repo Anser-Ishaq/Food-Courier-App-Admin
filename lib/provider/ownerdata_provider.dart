@@ -33,6 +33,19 @@ class OwnerdataProvider with ChangeNotifier {
     }
   }
 
+  Future<UserModel?> getOwnerByEmail(String email) async {
+    _setLoading(true);
+    try {
+      final owner = await _databaseService.getUserByEmail(email);
+      return owner;
+    } catch (e) {
+      _handleError(e);
+    } finally {
+      _setLoading(false);
+    }
+    return null;
+  }
+
   Future<String> createOwner(UserModel owner) async {
     _setLoading(true);
     try {
@@ -47,12 +60,24 @@ class OwnerdataProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateOwner(
-      {required String uid, String? newPhone, String? newRestaurantID}) async {
+  Future<void> updateOwner({
+    required String uid,
+    String? newName,
+    String? newEmail,
+    String? newPhone,
+    String? newRestaurantID,
+    String? existingRestaurantID,
+  }) async {
     _setLoading(true);
     try {
       await _databaseService.updateUser(
-          uid: uid, newPhone: newPhone, newRestaurantID: newRestaurantID);
+        uid: uid,
+        newName: newName,
+        newEmail: newEmail,
+        newPhone: newPhone,
+        newRestaurantID: newRestaurantID,
+        existingRestaurantID: existingRestaurantID,
+      );
       final updatedOwner = await _databaseService.getUser(uid: uid);
       if (updatedOwner != null) _setCurrentOwner(updatedOwner);
       if (kDebugMode) print('Owner updated successfully!');

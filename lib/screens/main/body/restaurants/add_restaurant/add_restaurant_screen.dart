@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/models/user_model.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/divider.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/phone_number_input.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/restaurant_details_text_field.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/save_button.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/sub_section.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +22,7 @@ class AddRestaurantScreen extends StatefulWidget {
 
 class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
   final _formKey = GlobalKey<FormState>();
+  final String _initialCountryCode = 'PK';
 
   String _restaurantName = '';
   String _restaurantAddress = '';
@@ -71,20 +74,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                   ),
                 ),
                 _spacer(),
-                Container(
-                  margin: EdgeInsets.only(
-                    left: screenWidth! * 0.025,
-                    right: screenWidth! * 0.02,
-                    top: screenWidth! * 0.01,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(screenWidth! * 0.01),
-                    border: Border.all(
-                      color: AppColors.silver.withAlpha(90),
-                      width: screenWidth! * 0.0005,
-                    ),
-                  ),
-                ),
+                const RestaurantDivider(),
                 _spacer(),
                 SubSection(
                   title: 'Owner Information'.toUpperCase(),
@@ -107,8 +97,9 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                       _spacer(),
                       PhoneNumberInput(
                         title: 'Owner Phone Number',
+                        initialCountryCode: _initialCountryCode,
                         onSaved: (value) {
-                          _ownerPhone = value!.completeNumber;
+                          _ownerPhone = value!.number;
                         },
                       ),
                     ],
@@ -128,91 +119,73 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
 
   Widget _saveButton(BuildContext context,
       RestaurantProvider restaurantProvider, OwnerdataProvider ownerProvider) {
-    return Align(
-      alignment: Alignment.center,
-      child: GestureDetector(
-        onTap: () async {
+    return SaveButton(
+      isLoading: restaurantProvider.isLoading || ownerProvider.isLoading,
+      onTap: () async {
+        if (_formKey.currentState?.validate() ?? false) {
+          // Prevent multiple submissions by checking loading state
           if (restaurantProvider.isLoading || ownerProvider.isLoading) return;
 
-          // Save the form's fields.
+          // Save the form fields
           _formKey.currentState?.save();
 
           try {
-            // Create and save owner
-            final owner = UserModel(
-              name: _ownerName,
-              email: _ownerEmail,
-              phone: _ownerPhone,
-              role: 'Owner',
-              createAt: Timestamp.now(),
-            );
-            final ownerId = await ownerProvider.createOwner(owner);
+            // Check if the owner already exists by email
+            final existingOwner =
+                await ownerProvider.getOwnerByEmail(_ownerEmail);
 
-            if (ownerId.isNotEmpty) {
-              // Create and save restaurant
-              final restaurant = Restaurant(
-                name: _restaurantName,
-                address: _restaurantAddress,
-                oid: ownerId,
-                ownerName: owner.name,
-                ownerEmail: owner.email,
-                ownerPhone: owner.phone,
-                creationDate: Timestamp.now(),
-              );
-              final restaurantId =
-                  await restaurantProvider.createRestaurant(restaurant);
-
-              // Update owner with new restaurant ID
-              await ownerProvider.updateOwner(
-                  uid: ownerId, newRestaurantID: restaurantId);
-
-              // Provide success feedback to the user
+            String ownerId;
+            if (existingOwner != null) {
+              ownerId = existingOwner.uid!;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Restaurant added successfully!')),
+                const SnackBar(
+                    content:
+                        Text('Existing owner found, linking restaurant...')),
               );
+            } else {
+              final owner = UserModel(
+                name: _ownerName,
+                email: _ownerEmail,
+                phoneISOCode: _initialCountryCode,
+                phone: _ownerPhone,
+                role: 'Owner',
+                createAt: Timestamp.now(),
+              );
+              ownerId = await ownerProvider.createOwner(owner);
+
+              if (ownerId.isEmpty) throw Exception('Failed to create owner.');
             }
+
+            // Create and save the restaurant
+            final restaurant = Restaurant(
+              name: _restaurantName,
+              address: _restaurantAddress,
+              oid: ownerId,
+              ownerName: existingOwner?.name ?? _ownerName,
+              ownerEmail: existingOwner?.email ?? _ownerEmail,
+              ownerPhone: existingOwner?.phone ?? _ownerPhone,
+              creationDate: Timestamp.now(),
+            );
+
+            final restaurantId =
+                await restaurantProvider.createRestaurant(restaurant);
+
+            // Update the owner with the new restaurant ID
+            await ownerProvider.updateOwner(
+              uid: ownerId,
+              newRestaurantID: restaurantId,
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Restaurant added successfully!')),
+            );
           } catch (e) {
-            // Handle errors and provide feedback
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error occurred: $e')),
             );
           }
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: screenWidth! * 0.015, vertical: screenWidth! * 0.005),
-          decoration: BoxDecoration(
-            gradient: AppColors.gradientPrimary,
-            borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-          ),
-          child: restaurantProvider.isLoading || ownerProvider.isLoading
-              ? CircularProgressIndicator(
-                  strokeWidth: screenWidth! * 0.0025,
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(AppColors.white),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Save',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: screenWidth! * 0.015,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(width: screenWidth! * 0.005),
-                    Icon(
-                      Icons.save_rounded,
-                      color: AppColors.white,
-                      size: screenWidth! * 0.017,
-                    ),
-                  ],
-                ),
-        ),
-      ),
+        }
+      },
     );
   }
 

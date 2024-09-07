@@ -7,13 +7,15 @@ import 'package:intl_phone_field/phone_number.dart';
 
 class PhoneNumberInput extends StatelessWidget {
   final String title;
+  final TextEditingController? controller;
   final String initialCountryCode;
   final void Function(PhoneNumber?)? onSaved;
 
   const PhoneNumberInput({
     super.key,
     required this.title,
-    this.initialCountryCode = 'PK',
+    this.controller,
+    required this.initialCountryCode,
     this.onSaved,
   });
 
@@ -34,6 +36,7 @@ class PhoneNumberInput extends StatelessWidget {
         ),
         SizedBox(height: screenWidth! * 0.0075),
         IntlPhoneField(
+          controller: controller,
           style: _textStyle(),
           dropdownTextStyle: _textStyle(),
           textAlignVertical: TextAlignVertical.center,

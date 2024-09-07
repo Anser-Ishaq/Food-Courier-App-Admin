@@ -19,7 +19,7 @@ class _FinancesBodyState extends State<FinancesBody> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(screenWidth! * 0.01),
       ),
-      child: Column(),
+      child: const Column(),
     );
   }
 }

@@ -37,7 +37,7 @@ class RestaurantProvider with ChangeNotifier {
   }
 
   Future<void> getRestaurantById(String rid) async {
-    _setLoading(true);
+    // _setLoading(true);
     try {
       final restaurant = await _databaseService.getRestaurant(rid: rid);
       _selectedRestaurant = restaurant;
@@ -45,7 +45,7 @@ class RestaurantProvider with ChangeNotifier {
     } catch (e) {
       _handleError(e);
     } finally {
-      _setLoading(false);
+      // _setLoading(false);
     }
   }
 
@@ -71,9 +71,18 @@ class RestaurantProvider with ChangeNotifier {
       await _databaseService.updateRestaurant(
         rid: restaurant.rid!,
         name: restaurant.name,
+        description: restaurant.description,
         address: restaurant.address,
+        phone: restaurant.phone,
+        percentFee: restaurant.percentFee,
+        staticFee: restaurant.staticFee,
+        minOrder: restaurant.minOrder,
+        whatsappNumber: restaurant.whatsappNumber,
         logo: restaurant.logo,
         oid: restaurant.oid,
+        ownerEmail: restaurant.ownerEmail,
+        ownerName: restaurant.ownerName,
+        ownerPhone: restaurant.ownerPhone,
         creationDate: restaurant.creationDate,
         active: restaurant.active,
       );

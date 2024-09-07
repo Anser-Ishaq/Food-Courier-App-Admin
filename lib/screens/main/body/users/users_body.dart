@@ -19,7 +19,7 @@ class _UsersBodyState extends State<UsersBody> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(screenWidth! * 0.01),
       ),
-      child: Column(),
+      child: const Column(),
     );
   }
 }

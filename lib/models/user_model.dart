@@ -5,6 +5,7 @@ class UserModel {
   String? name;
   String? email;
   String? role;
+  String? phoneISOCode;
   String? phone;
   String? imageURL;
   Timestamp? createAt;
@@ -16,6 +17,7 @@ class UserModel {
     this.name,
     this.email,
     this.role,
+    this.phoneISOCode,
     this.phone,
     this.imageURL,
     this.createAt,
@@ -29,6 +31,7 @@ class UserModel {
       name: json['name'],
       email: json['email'],
       role: json['role'],
+      phoneISOCode: json['phoneISOCode'],
       phone: json['phone'],
       imageURL: json['imageURL'],
       createAt: json['createAt'],
@@ -43,6 +46,7 @@ class UserModel {
     data['name'] = name;
     data['email'] = email;
     data['role'] = role;
+    data['phoneISOCode'] = phoneISOCode;
     data['phone'] = phone;
     data['imageURL'] = imageURL;
     data['createAt'] = createAt;

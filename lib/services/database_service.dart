@@ -58,16 +58,43 @@ class DatabaseService {
     }
   }
 
+  Future<UserModel?> getUserByEmail(String email) async {
+    try {
+      final QuerySnapshot<UserModel> querySnapshot = await _usersCollection
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        if (kDebugMode) print("User with email $email does not exist.");
+        return null;
+      }
+
+      return querySnapshot.docs.first.data();
+    } catch (e) {
+      if (kDebugMode) print("Error getting user by email: $e");
+      return null;
+    }
+  }
+
   Future<void> updateUser({
     required String uid,
+    String? newName,
+    String? newEmail,
     String? newPhone,
     String? newRestaurantID,
+    String? existingRestaurantID,
   }) async {
     try {
       Map<String, dynamic> data = {};
+      if (newName != null) data['name'] = newName;
+      if (newEmail != null) data['email'] = newEmail;
       if (newPhone != null) data['phone'] = newPhone;
       if (newRestaurantID != null) {
         data['restaurantIDs'] = FieldValue.arrayUnion([newRestaurantID]);
+      }
+      if (existingRestaurantID != null) {
+        data['restaurantIDs'] = FieldValue.arrayRemove([existingRestaurantID]);
       }
 
       await _usersCollection.doc(uid).update(data);
@@ -120,20 +147,39 @@ class DatabaseService {
   Future<void> updateRestaurant({
     required String rid,
     String? name,
+    String? description,
     String? address,
     String? logo,
     String? oid,
     Timestamp? creationDate,
     bool? active,
+    String? phone,
+    String? percentFee,
+    String? staticFee,
+    String? minOrder,
+    String? whatsappNumber,
+    String? ownerName,
+    String? ownerEmail,
+    String? ownerPhone,
   }) async {
     try {
       Map<String, dynamic> data = {};
+
       if (name != null) data['name'] = name;
+      if (description != null) data['description'] = description;
       if (address != null) data['address'] = address;
+      if (phone != null) data['phone'] = phone;
       if (logo != null) data['logo'] = logo;
       if (oid != null) data['oid'] = oid;
       if (creationDate != null) data['creationDate'] = creationDate;
       if (active != null) data['active'] = active;
+      if (percentFee != null) data['percentFee'] = percentFee;
+      if (staticFee != null) data['staticFee'] = staticFee;
+      if (minOrder != null) data['minOrder'] = minOrder;
+      if (whatsappNumber != null) data['whatsappNumber'] = whatsappNumber;
+      if (ownerName != null) data['ownerName'] = ownerName;
+      if (ownerEmail != null) data['ownerEmail'] = ownerEmail;
+      if (ownerPhone != null) data['ownerPhone'] = ownerPhone;
 
       await _restaurantsCollection.doc(rid).update(data);
     } catch (e) {
