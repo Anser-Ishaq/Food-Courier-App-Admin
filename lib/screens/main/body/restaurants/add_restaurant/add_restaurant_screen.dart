@@ -22,13 +22,29 @@ class AddRestaurantScreen extends StatefulWidget {
 
 class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
   final _formKey = GlobalKey<FormState>();
-  final String _initialCountryCode = 'PK';
+  final _restaurantNameController = TextEditingController();
+  final _restaurantAddressController = TextEditingController();
+  final _ownerNameController = TextEditingController();
+  final _ownerEmailController = TextEditingController();
+  final _ownerPhoneController = TextEditingController();
+
+  String _initialCountryCode = 'PK';
 
   String _restaurantName = '';
   String _restaurantAddress = '';
   String _ownerName = '';
   String _ownerEmail = '';
   String _ownerPhone = '';
+
+  @override
+  void dispose() {
+    _restaurantNameController.dispose();
+    _restaurantAddressController.dispose();
+    _ownerNameController.dispose();
+    _ownerEmailController.dispose();
+    _ownerPhoneController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +75,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                     children: [
                       RestaurantDetailsTextField(
                         title: 'Restaurant Name',
+                        controller: _restaurantNameController,
                         onSaved: (value) {
                           _restaurantName = value ?? '';
                         },
@@ -66,6 +83,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                       _spacer(),
                       RestaurantDetailsTextField(
                         title: 'Restaurant Address',
+                        controller: _restaurantAddressController,
                         onSaved: (value) {
                           _restaurantAddress = value ?? '';
                         },
@@ -83,6 +101,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                     children: [
                       RestaurantDetailsTextField(
                         title: 'Owner Name',
+                        controller: _ownerNameController,
                         onSaved: (value) {
                           _ownerName = value ?? '';
                         },
@@ -90,6 +109,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                       _spacer(),
                       RestaurantDetailsTextField(
                         title: 'Owner Email',
+                        controller: _ownerEmailController,
                         onSaved: (value) {
                           _ownerEmail = value ?? '';
                         },
@@ -97,9 +117,11 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                       _spacer(),
                       PhoneNumberInput(
                         title: 'Owner Phone Number',
+                        controller: _ownerPhoneController,
                         initialCountryCode: _initialCountryCode,
                         onSaved: (value) {
                           _ownerPhone = value!.number;
+                          _initialCountryCode = value.countryISOCode;
                         },
                       ),
                     ],
@@ -139,8 +161,8 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
               ownerId = existingOwner.uid!;
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                    content:
-                        Text('Existing owner found, linking restaurant...')),
+                  content: Text('Existing owner found, linking restaurant...'),
+                ),
               );
             } else {
               final owner = UserModel(
@@ -163,6 +185,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
               oid: ownerId,
               ownerName: existingOwner?.name ?? _ownerName,
               ownerEmail: existingOwner?.email ?? _ownerEmail,
+              ownerPhoneISOCode: existingOwner?.phoneISOCode ?? _initialCountryCode,
               ownerPhone: existingOwner?.phone ?? _ownerPhone,
               creationDate: Timestamp.now(),
             );
@@ -177,16 +200,31 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
             );
 
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Restaurant added successfully!')),
+              const SnackBar(
+                content: Text('Restaurant added successfully!'),
+              ),
             );
+
+            _clearFields();
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error occurred: $e')),
+              SnackBar(
+                content: Text('Error occurred: $e'),
+              ),
             );
           }
         }
       },
     );
+  }
+
+  void _clearFields() {
+    _restaurantNameController.clear();
+    _restaurantAddressController.clear();
+    _ownerNameController.clear();
+    _ownerEmailController.clear();
+    _ownerPhoneController.clear();
+    _initialCountryCode = 'PK';
   }
 
   SizedBox _spacer() {

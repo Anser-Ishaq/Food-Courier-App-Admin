@@ -37,6 +37,7 @@ class PhoneNumberInput extends StatelessWidget {
         SizedBox(height: screenWidth! * 0.0075),
         IntlPhoneField(
           controller: controller,
+          flagWidth: screenWidth! * 0.02,
           style: _textStyle(),
           dropdownTextStyle: _textStyle(),
           textAlignVertical: TextAlignVertical.center,

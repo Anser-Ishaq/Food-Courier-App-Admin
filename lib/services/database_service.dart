@@ -153,13 +153,16 @@ class DatabaseService {
     String? oid,
     Timestamp? creationDate,
     bool? active,
+    String? phoneISOCode,
     String? phone,
     String? percentFee,
     String? staticFee,
     String? minOrder,
+    String? whatsappNumberISOCode,
     String? whatsappNumber,
     String? ownerName,
     String? ownerEmail,
+    String? ownerPhoneISOCode,
     String? ownerPhone,
   }) async {
     try {
@@ -168,6 +171,7 @@ class DatabaseService {
       if (name != null) data['name'] = name;
       if (description != null) data['description'] = description;
       if (address != null) data['address'] = address;
+      if (phoneISOCode != null) data['phoneISOCode'] = phoneISOCode;
       if (phone != null) data['phone'] = phone;
       if (logo != null) data['logo'] = logo;
       if (oid != null) data['oid'] = oid;
@@ -176,9 +180,11 @@ class DatabaseService {
       if (percentFee != null) data['percentFee'] = percentFee;
       if (staticFee != null) data['staticFee'] = staticFee;
       if (minOrder != null) data['minOrder'] = minOrder;
+      if (whatsappNumberISOCode != null) data['whatsappNumberISOCode'] = whatsappNumberISOCode;
       if (whatsappNumber != null) data['whatsappNumber'] = whatsappNumber;
       if (ownerName != null) data['ownerName'] = ownerName;
       if (ownerEmail != null) data['ownerEmail'] = ownerEmail;
+      if (ownerPhoneISOCode != null) data['ownerPhoneISOCode'] = ownerPhoneISOCode;
       if (ownerPhone != null) data['ownerPhone'] = ownerPhone;
 
       await _restaurantsCollection.doc(rid).update(data);

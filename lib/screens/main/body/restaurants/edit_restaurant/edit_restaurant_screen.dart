@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/provider/restaurant_provider.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/restaurant_management.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/working_hours.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -100,7 +101,7 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
               color: AppColors.white,
               borderRadius: BorderRadius.circular(screenWidth! * 0.01),
             ),
-            height: _findHeightOfTextView(_selectedIndex),
+            height: _findHeightOfTabBarView(_selectedIndex),
             child: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
@@ -120,8 +121,8 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
                       ),
                       _buildTabBarView(
                         index: 1,
-                        child: const Text(
-                          'Working Hours',
+                        child: WorkingHours(
+                          restaurant: _restaurantProvider.selectedRestaurant!,
                         ),
                       ),
                       _buildTabBarView(
@@ -211,7 +212,7 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
     );
   }
 
-  double _findHeightOfTextView(int index) {
+  double _findHeightOfTabBarView(int index) {
     switch (index) {
       case 0:
         return screenWidth! * 1;

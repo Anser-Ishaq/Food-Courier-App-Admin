@@ -291,11 +291,12 @@ packages:
   intl_phone_field:
     dependency: "direct main"
     description:
-      name: intl_phone_field
-      sha256: "73819d3dfcb68d2c85663606f6842597c3ddf6688ac777f051b17814fe767bbf"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.2.0"
+      path: "."
+      ref: main
+      resolved-ref: "8dd2def43fa2de4123e8bea0ae940f8967689f19"
+      url: "https://github.com/ir-khan/intl_phone_field.git"
+    source: git
+    version: "3.3.0"
   js:
     dependency: transitive
     description:
