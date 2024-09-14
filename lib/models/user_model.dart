@@ -36,7 +36,7 @@ class UserModel {
       imageURL: json['imageURL'],
       createAt: json['createAt'],
       status: json['status'],
-      restaurantIDs: (json['restaurantIDs'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      restaurantIDs: (json['restaurantIDs'] as List<dynamic>?)?.map((restaurantID) => restaurantID as String).toList(),
     );
   }
 

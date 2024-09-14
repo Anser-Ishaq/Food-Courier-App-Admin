@@ -65,45 +65,47 @@ class _RestaurantDetailsTextFieldState
           ),
         ),
         SizedBox(height: screenWidth! * 0.0075),
-        Hover(
-          builder: (hover) {
-            return TextFormField(
-              controller: widget.controller,
-              onSaved: widget.onSaved,
-              keyboardType: TextInputType.number,
-              style: TextStyle(
-                color: AppColors.textDarkColor,
-                fontFamily: 'DM Sans',
-                fontSize: screenWidth! * 0.0115,
-                fontWeight: FontWeight.w400,
+        Hover(builder: (hover) {
+          return TextFormField(
+            controller: widget.controller,
+            onSaved: widget.onSaved,
+            keyboardType: TextInputType.number,
+            style: TextStyle(
+              color: AppColors.textDarkColor,
+              fontFamily: 'DM Sans',
+              fontSize: screenWidth! * 0.0115,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              hintText: widget.title,
+              hintStyle: TextStyle(
+                color: AppColors.silver.withAlpha(140),
               ),
-              decoration: InputDecoration(
-                hintText: widget.title,
-                hintStyle: TextStyle(
-                  color: AppColors.silver.withAlpha(140),
-                ),
-                isCollapsed: true,
-                border: _border(),
-                focusedBorder: _border(),
-                enabledBorder: _border(),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: screenWidth! * 0.01,
-                  vertical: screenWidth! * 0.01,
-                ),
-                suffixIcon: widget.showIncrementDecrement && hover
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildIncrementDecrementButton(isIncrement: true),
-                          _buildIncrementDecrementButton(isIncrement: false),
-                        ],
-                      )
-                    : null,
+              // isCollapsed: true,
+              border: _border(),
+              focusedBorder: _border(),
+              enabledBorder: _border(),
+              constraints: BoxConstraints(
+                maxHeight: screenWidth! * 0.03,
+                minHeight: screenWidth! * 0.03,
               ),
-            );
-          }
-        ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: screenWidth! * 0.01,
+                vertical: screenWidth! * 0.01,
+              ),
+              suffixIcon: widget.showIncrementDecrement && hover
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildIncrementDecrementButton(isIncrement: true),
+                        _buildIncrementDecrementButton(isIncrement: false),
+                      ],
+                    )
+                  : null,
+            ),
+          );
+        }),
       ],
     );
   }
@@ -111,27 +113,27 @@ class _RestaurantDetailsTextFieldState
   Widget _buildIncrementDecrementButton({
     required bool isIncrement,
   }) {
-    return Hover(
-      builder: (hover) {
-        return GestureDetector(
-          onTap: isIncrement ? _increment : _decrement,
-          child: Container(
-            alignment: Alignment.center,
-            width: screenWidth! * 0.015,
-            decoration: BoxDecoration(
-              color: hover ? AppColors.silver.withAlpha(150) : AppColors.silver.withAlpha(80),
-              borderRadius: BorderRadius.circular(screenWidth! * 0.001),
-            ),
-            child: Icon(
-              isIncrement ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-              color: AppColors.textDarkColor,
-              size: screenWidth! * 0.01,
-              fill: 1,
-            ),
+    return Hover(builder: (hover) {
+      return GestureDetector(
+        onTap: isIncrement ? _increment : _decrement,
+        child: Container(
+          alignment: Alignment.center,
+          width: screenWidth! * 0.015,
+          decoration: BoxDecoration(
+            color: hover
+                ? AppColors.silver.withAlpha(150)
+                : AppColors.silver.withAlpha(80),
+            borderRadius: BorderRadius.circular(screenWidth! * 0.001),
           ),
-        );
-      }
-    );
+          child: Icon(
+            isIncrement ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+            color: AppColors.textDarkColor,
+            size: screenWidth! * 0.0085,
+            fill: 1,
+          ),
+        ),
+      );
+    });
   }
 
   OutlineInputBorder _border() {

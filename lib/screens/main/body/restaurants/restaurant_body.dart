@@ -71,7 +71,7 @@ class _RestaurantBodyState extends State<RestaurantBody> {
               },
               onTapActive: (Restaurant restaurant) {
                 restaurant.active = !restaurant.active;
-                restaurantProvider.updateRestaurant(restaurant);
+                restaurantProvider.updateRestaurant(rid: restaurant.rid!, newActive: restaurant.active);
               },
               onTapDelete: (Restaurant restaurant) {
                 Provider.of<OwnerdataProvider>(context, listen: false).updateOwner(uid: restaurant.oid!, existingRestaurantID: restaurant.rid!);

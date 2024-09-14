@@ -353,9 +353,9 @@ class _RestaurantManagementState extends State<RestaurantManagement> {
                 feePercent ??= widget.restaurant.percentFee ?? '0';
                 staticFee ??= widget.restaurant.staticFee ?? '0';
                 minOrder ??= widget.restaurant.minOrder ?? '10';
-                whatsappNumberISOCode ??= widget.restaurant.whatsappNumberISOCode;
+                whatsappNumberISOCode ??=
+                    widget.restaurant.whatsappNumberISOCode;
                 whatsappNumber ??= widget.restaurant.whatsappNumber;
-
 
                 ownerName ??= widget.restaurant.ownerName;
                 ownerEmail ??= widget.restaurant.ownerEmail;
@@ -363,23 +363,23 @@ class _RestaurantManagementState extends State<RestaurantManagement> {
                 ownerPhone ??= widget.restaurant.ownerPhone;
 
                 // Update restaurant details
-                await restaurantProvider.updateRestaurant(Restaurant(
-                  rid: widget.restaurant.rid,
-                  name: restaurantName,
-                  description: restaurantDescription,
-                  address: restaurantAddress,
-                  phoneISOCode: restaurantPhoneISOCode,
-                  phone: restaurantPhone,
-                  percentFee: feePercent,
-                  staticFee: staticFee,
-                  minOrder: minOrder,
-                  whatsappNumberISOCode: whatsappNumberISOCode,
-                  whatsappNumber: whatsappNumber,
-                  ownerName: ownerName,
-                  ownerEmail: ownerEmail,
-                  ownerPhoneISOCode: ownerPhoneISOCode,
-                  ownerPhone: ownerPhone,
-                ));
+                await restaurantProvider.updateRestaurant(
+                  rid: widget.restaurant.rid!,
+                  newName: restaurantName,
+                  newDescription: restaurantDescription,
+                  newAddress: restaurantAddress,
+                  newPhoneISOCode: restaurantPhoneISOCode,
+                  newPhone: restaurantPhone,
+                  newPercentFee: feePercent,
+                  newStaticFee: staticFee,
+                  newMinOrder: minOrder,
+                  newWhatsappNumberISOCode: whatsappNumberISOCode,
+                  newWhatsappNumber: whatsappNumber,
+                  newOwnerName: ownerName,
+                  newOwnerEmail: ownerEmail,
+                  newOwnerPhoneISOCode: ownerPhoneISOCode,
+                  newOwnerPhone: ownerPhone,
+                );
 
                 // Update owner details
                 await ownerProvider.updateOwner(

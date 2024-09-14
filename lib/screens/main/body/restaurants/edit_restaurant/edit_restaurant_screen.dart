@@ -97,59 +97,53 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
           Container(
             margin: EdgeInsets.all(screenWidth! * 0.007),
             padding: EdgeInsets.all(screenWidth! * 0.02),
+            constraints: BoxConstraints(
+              minHeight: screenHeight! * 0.7,
+            ),
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(screenWidth! * 0.01),
             ),
-            height: _findHeightOfTabBarView(_selectedIndex),
-            child: TabBarView(
-              controller: _tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: _isLoading
-                  ? [
-                      _buildLoadingTab(),
-                      _buildLoadingTab(),
-                      _buildLoadingTab(),
-                      _buildLoadingTab(),
-                    ]
-                  : [
-                      _buildTabBarView(
-                        index: 0,
-                        child: RestaurantManagement(
-                          restaurant: _restaurantProvider.selectedRestaurant!,
-                        ),
-                      ),
-                      _buildTabBarView(
-                        index: 1,
-                        child: WorkingHours(
-                          restaurant: _restaurantProvider.selectedRestaurant!,
-                        ),
-                      ),
-                      _buildTabBarView(
-                        index: 2,
-                        child: const Text(
-                          'Location',
-                        ),
-                      ),
-                      _buildTabBarView(
-                        index: 3,
-                        child: const Text(
-                          'Plans',
-                        ),
-                      ),
-                    ],
-            ),
+            child: _isLoading
+                ? _buildLoadingTab()
+                : _selectedIndex == 0
+                    ? RestaurantManagement(
+                        restaurant: _restaurantProvider.selectedRestaurant!)
+                    : _selectedIndex == 1
+                        ? WorkingHours(
+                            restaurant: _restaurantProvider.selectedRestaurant!)
+                        : _selectedIndex == 2
+                            ? Text('Location')
+                            : Text('Plan'),
+            // child: TabBarView(
+            //   controller: _tabController,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   children: _isLoading
+            //       ? [
+            //           _buildLoadingTab(),
+            //           _buildLoadingTab(),
+            //           _buildLoadingTab(),
+            //           _buildLoadingTab(),
+            //         ]
+            //       : [
+            //           RestaurantManagement(
+            //             restaurant: _restaurantProvider.selectedRestaurant!,
+            //           ),
+            //           WorkingHours(
+            //             restaurant: _restaurantProvider.selectedRestaurant!,
+            //           ),
+            //           const Text(
+            //             'Location',
+            //           ),
+            //           const Text(
+            //             'Plans',
+            //           ),
+            //         ],
+            // ),
           ),
         ],
       ),
     );
-  }
-
-  Widget _buildTabBarView({
-    required int index,
-    required Widget child,
-  }) {
-    return child;
   }
 
   Widget _buildTab({
@@ -194,22 +188,25 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
   }
 
   Widget _buildLoadingTab() {
-    return Stack(
-      children: [
-        Positioned(
-          top: screenHeight! / 3,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: CircularProgressIndicator(
-              strokeWidth: screenWidth! * 0.0025,
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(AppColors.primary),
-            ),
-          ),
-        ),
-      ],
-    );
+    return
+        // Stack(
+        //   children: [
+        //     Positioned(
+        //       top: screenHeight! / 3,
+        //       left: 0,
+        //       right: 0,
+        //       child:
+        Center(
+      child: CircularProgressIndicator(
+        strokeWidth: screenWidth! * 0.0025,
+        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+      ),
+    )
+        // ,
+        //     ),
+        //   ],
+        // )
+        ;
   }
 
   double _findHeightOfTabBarView(int index) {

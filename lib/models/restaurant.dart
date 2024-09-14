@@ -20,6 +20,7 @@ class Restaurant {
   String? ownerPhone;
   Timestamp? creationDate;
   bool active;
+  List<String>? shifts;
 
   Restaurant({
     this.rid,
@@ -41,6 +42,7 @@ class Restaurant {
     this.ownerPhone,
     this.creationDate,
     this.active = true,
+    this.shifts,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,8 @@ class Restaurant {
       ownerPhone: json['ownerPhone'],
       creationDate: json['creationDate'],
       active: json['active'] ?? true,
+      shifts:
+          (json['shifts'] as List<dynamic>?)?.map((shift) => shift as String).toList(),
     );
   }
 
@@ -90,6 +94,7 @@ class Restaurant {
       data['creationDate'] = creationDate;
     }
     data['active'] = active;
+    data['shifts'] = shifts;
     return data;
   }
 

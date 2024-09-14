@@ -10,7 +10,9 @@ import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 Future<void> setupFirebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 Future<void> registerServices() async {
@@ -44,6 +46,8 @@ TextStyle commonTextStyle(double fontSize, FontWeight fontWeight) {
 String formatDate(DateTime dateTime) {
   return DateFormat('EEEE, MMMM d, y h:mm a').format(dateTime);
 }
+
+String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 
 
 // String generateChatID({required String uid1, required String uid2}) {

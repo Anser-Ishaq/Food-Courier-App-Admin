@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,6 +24,8 @@ void main() async {
 Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await setupFirebase();
+  await registerServices();
   ResponsiveSizingConfig.instance.setCustomBreakpoints(
     const ScreenBreakpoints(desktop: 1025, tablet: 501, watch: 201),
   );
@@ -36,8 +39,6 @@ Future<void> setup() async {
       systemNavigationBarDividerColor: AppColors.primary,
     ),
   );
-  await setupFirebase();
-  await registerServices();
 }
 
 class MyApp extends StatelessWidget {
@@ -66,32 +67,31 @@ class MyApp extends StatelessWidget {
         900: Color(0xFF5A0727),
       },
     );
-return MultiProvider(
-  providers: [
-    ChangeNotifierProvider(create: (_) => AuthProvider()),
-    ChangeNotifierProvider(create: (_) => UserdataProvider()),
-    ChangeNotifierProvider(create: (_) => OwnerdataProvider()),
-    ChangeNotifierProvider(create: (_) => RestaurantProvider()),
-    ChangeNotifierProvider(create: (_) => CheckboxProvider()),
-  ],
-  builder: (context, child) {
-    return ScreenUtilInit(
-      designSize: const Size(1920, 1152),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserdataProvider()),
+        ChangeNotifierProvider(create: (_) => OwnerdataProvider()),
+        ChangeNotifierProvider(create: (_) => RestaurantProvider()),
+        ChangeNotifierProvider(create: (_) => CheckboxProvider()),
+      ],
       builder: (context, child) {
-        return MaterialApp.router(
-          title: 'Food Couriers Admin',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-            primarySwatch: primarySwatch,
-            useMaterial3: true,
-          ),
-          routerConfig: _navigationService.router,
+        return ScreenUtilInit(
+          designSize: const Size(1920, 1152),
+          builder: (context, child) {
+            return MaterialApp.router(
+              title: 'Food Couriers Admin',
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+                primarySwatch: primarySwatch,
+                useMaterial3: true,
+              ),
+              routerConfig: _navigationService.router,
+            );
+          },
         );
       },
     );
-  },
-);
-
   }
 }

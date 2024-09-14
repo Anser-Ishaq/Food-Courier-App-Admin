@@ -65,29 +65,47 @@ class RestaurantProvider with ChangeNotifier {
 
   }
 
-  Future<void> updateRestaurant(Restaurant restaurant) async {
+  Future<void> updateRestaurant({
+    required String rid,
+    String? newName,
+    String? newDescription,
+    String? newAddress,
+    String? newPhoneISOCode,
+    String? newPhone,
+    String? newPercentFee,
+    String? newStaticFee,
+    String? newMinOrder,
+    String? newWhatsappNumberISOCode,
+    String? newWhatsappNumber,
+    String? newLogo,
+    String? newOwnerEmail,
+    String? newOwnerName,
+    String? newOwnerPhoneISOCode,
+    String? newOwnerPhone,
+    bool? newActive,
+    String? newShiftID,
+  }) async {
     _setLoading(true);
     try {
       await _databaseService.updateRestaurant(
-        rid: restaurant.rid!,
-        name: restaurant.name,
-        description: restaurant.description,
-        address: restaurant.address,
-        phoneISOCode: restaurant.phoneISOCode,
-        phone: restaurant.phone,
-        percentFee: restaurant.percentFee,
-        staticFee: restaurant.staticFee,
-        minOrder: restaurant.minOrder,
-        whatsappNumberISOCode: restaurant.whatsappNumberISOCode,
-        whatsappNumber: restaurant.whatsappNumber,
-        logo: restaurant.logo,
-        oid: restaurant.oid,
-        ownerEmail: restaurant.ownerEmail,
-        ownerName: restaurant.ownerName,
-        ownerPhoneISOCode: restaurant.ownerPhoneISOCode,
-        ownerPhone: restaurant.ownerPhone,
-        creationDate: restaurant.creationDate,
-        active: restaurant.active,
+        rid: rid,
+        name: newName,
+        description: newDescription,
+        address: newAddress,
+        phoneISOCode: newPhoneISOCode,
+        phone: newPhone,
+        percentFee: newPercentFee,
+        staticFee: newStaticFee,
+        minOrder: newMinOrder,
+        whatsappNumberISOCode: newWhatsappNumberISOCode,
+        whatsappNumber: newWhatsappNumber,
+        logo: newLogo,
+        ownerEmail: newOwnerEmail,
+        ownerName: newOwnerName,
+        ownerPhoneISOCode: newOwnerPhoneISOCode,
+        ownerPhone: newOwnerPhone,
+        active: newActive,
+        shiftID: newShiftID,
       );
       fetchRestaurants();
       if (kDebugMode) print('Restaurant updated successfully!');

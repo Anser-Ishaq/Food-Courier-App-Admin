@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:food_couriers_admin/models/shift_model.dart';
 import 'package:food_couriers_admin/models/user_model.dart';
 import 'package:food_couriers_admin/models/restaurant.dart';
 
@@ -8,6 +9,7 @@ class DatabaseService {
 
   late CollectionReference<UserModel> _usersCollection;
   late CollectionReference<Restaurant> _restaurantsCollection;
+  late CollectionReference<ShiftModel> _shiftsCollection;
 
   DatabaseService() {
     _setupCollectionReferences();
@@ -25,6 +27,12 @@ class DatabaseService {
               fromFirestore: (snapshots, _) =>
                   Restaurant.fromJson(snapshots.data()!),
               toFirestore: (restaurant, _) => restaurant.toJson(),
+            );
+    _shiftsCollection =
+        _firebaseFirestore.collection('shifts').withConverter<ShiftModel>(
+              fromFirestore: (snapshots, _) =>
+                  ShiftModel.fromJson(snapshots.data()!),
+              toFirestore: (shift, _) => shift.toJson(),
             );
   }
 
@@ -150,8 +158,6 @@ class DatabaseService {
     String? description,
     String? address,
     String? logo,
-    String? oid,
-    Timestamp? creationDate,
     bool? active,
     String? phoneISOCode,
     String? phone,
@@ -164,6 +170,7 @@ class DatabaseService {
     String? ownerEmail,
     String? ownerPhoneISOCode,
     String? ownerPhone,
+    String? shiftID,
   }) async {
     try {
       Map<String, dynamic> data = {};
@@ -174,18 +181,21 @@ class DatabaseService {
       if (phoneISOCode != null) data['phoneISOCode'] = phoneISOCode;
       if (phone != null) data['phone'] = phone;
       if (logo != null) data['logo'] = logo;
-      if (oid != null) data['oid'] = oid;
-      if (creationDate != null) data['creationDate'] = creationDate;
       if (active != null) data['active'] = active;
       if (percentFee != null) data['percentFee'] = percentFee;
       if (staticFee != null) data['staticFee'] = staticFee;
       if (minOrder != null) data['minOrder'] = minOrder;
-      if (whatsappNumberISOCode != null) data['whatsappNumberISOCode'] = whatsappNumberISOCode;
+      if (whatsappNumberISOCode != null) {
+        data['whatsappNumberISOCode'] = whatsappNumberISOCode;
+      }
       if (whatsappNumber != null) data['whatsappNumber'] = whatsappNumber;
       if (ownerName != null) data['ownerName'] = ownerName;
       if (ownerEmail != null) data['ownerEmail'] = ownerEmail;
-      if (ownerPhoneISOCode != null) data['ownerPhoneISOCode'] = ownerPhoneISOCode;
+      if (ownerPhoneISOCode != null) {
+        data['ownerPhoneISOCode'] = ownerPhoneISOCode;
+      }
       if (ownerPhone != null) data['ownerPhone'] = ownerPhone;
+      if (shiftID != null) data['shifts'] = FieldValue.arrayUnion([shiftID]);
 
       await _restaurantsCollection.doc(rid).update(data);
     } catch (e) {
@@ -212,5 +222,82 @@ class DatabaseService {
       if (kDebugMode) print("Error getting all restaurants: $e");
       return [];
     }
+  }
+
+  Future<String> createShift({required ShiftModel shift}) async {
+    if (shift.sid != null) {
+      await _shiftsCollection.doc(shift.sid).set(shift);
+      return shift.sid!;
+    }
+    final docRef = _shiftsCollection.doc();
+
+    shift.sid = docRef.id;
+    await docRef.set(shift);
+
+    return docRef.id;
+  }
+
+  Future<ShiftModel?> getShift({required String sid}) async {
+    try {
+      final DocumentSnapshot<ShiftModel> documentSnapshot =
+          await _shiftsCollection.doc(sid).get();
+
+      if (documentSnapshot.exists) {
+        return documentSnapshot.data();
+      } else {
+        if (kDebugMode) {
+          print("Shift with document ID $sid does not exist.");
+        }
+        return null;
+      }
+    } catch (e) {
+      if (kDebugMode) print("Error getting shift: $e");
+      return null;
+    }
+  }
+
+  Future<void> updateShift({
+    required String sid,
+  }) async {
+    try {
+      Map<String, dynamic> data = {};
+
+      await _shiftsCollection.doc(sid).update(data);
+    } catch (e) {
+      if (kDebugMode) print("Error updating shift: $e");
+    }
+  }
+
+  Future<void> deleteShift({required String sid}) async {
+    try {
+      await _shiftsCollection.doc(sid).delete();
+    } catch (e) {
+      if (kDebugMode) print("Error deleting shift: $e");
+    }
+  }
+
+  Stream<List<ShiftModel>?> getAllShifts({
+    required List<String>? shiftIDs,
+  }) {
+    if (shiftIDs == null || shiftIDs.isEmpty) {
+      return Stream.value([]);
+    }
+
+    return _shiftsCollection
+        .where('sid', whereIn: shiftIDs)
+        .orderBy('shiftNo')
+        .snapshots()
+        .map((querySnapshot) {
+      if (querySnapshot.docs.isEmpty) {
+        return null;
+      }
+
+      return querySnapshot.docs.map((doc) => doc.data()).toList();
+    }).handleError((e) {
+      if (kDebugMode) {
+        print("Error getting all shifts: $e");
+      }
+      return null;
+    });
   }
 }

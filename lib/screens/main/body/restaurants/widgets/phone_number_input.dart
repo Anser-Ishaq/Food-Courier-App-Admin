@@ -56,10 +56,14 @@ class PhoneNumberInput extends StatelessWidget {
             hintStyle: TextStyle(
               color: AppColors.silver.withAlpha(140),
             ),
-            isCollapsed: true,
+            // isCollapsed: true,
             border: _border(),
             focusedBorder: _border(),
             enabledBorder: _border(),
+            constraints: BoxConstraints(
+              maxHeight: screenWidth! * 0.03,
+              minHeight: screenWidth! * 0.03,
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: screenWidth! * 0.01,
               vertical: screenWidth! * 0.01,
