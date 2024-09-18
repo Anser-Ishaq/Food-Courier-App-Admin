@@ -57,9 +57,9 @@ class PhoneNumberInput extends StatelessWidget {
               color: AppColors.silver.withAlpha(140),
             ),
             // isCollapsed: true,
-            border: _border(),
-            focusedBorder: _border(),
-            enabledBorder: _border(),
+            border: border(),
+            focusedBorder: border(),
+            enabledBorder: border(),
             constraints: BoxConstraints(
               maxHeight: screenWidth! * 0.03,
               minHeight: screenWidth! * 0.03,
@@ -79,21 +79,13 @@ class PhoneNumberInput extends StatelessWidget {
                 hintStyle: TextStyle(
                   color: AppColors.silver.withAlpha(140),
                 ),
-                border: _border(),
-                focusedBorder: _border(),
-                enabledBorder: _border(),
+                border: border(),
+                focusedBorder: border(),
+                enabledBorder: border(),
               ),
               searchFieldPadding: EdgeInsets.all(screenWidth! * 0.01)),
         ),
       ],
-    );
-  }
-
-  OutlineInputBorder _border() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-      borderSide: BorderSide(color: AppColors.primary.withOpacity(0.8)),
-      gapPadding: 0,
     );
   }
 

@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Enum to represent shift types
-enum ShiftType {
-  morning,
-  evening,
-  night,
-}
-
 enum Day {
   monday,
   tuesday,
@@ -72,7 +65,6 @@ class ShiftModel {
   String? rid;
   String? oid;
   int? shiftNo;
-  ShiftType? shiftType;
   List<WorkingHoursModel>? workingHours;
 
   ShiftModel({
@@ -80,7 +72,6 @@ class ShiftModel {
     required this.rid,
     required this.oid,
     required this.shiftNo,
-    required this.shiftType,
     required this.workingHours,
   });
 
@@ -89,9 +80,7 @@ class ShiftModel {
       sid: json['sid'],
       rid: json['rid'],
       oid: json['oid'],
-
       shiftNo: json['shiftNo'],
-      shiftType: ShiftType.values.byName(json['shiftType']),
       workingHours: (json['workingHours'] as List)
           .map((shift) => WorkingHoursModel.fromJson(shift))
           .toList(),
@@ -100,19 +89,36 @@ class ShiftModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['sid'] = sid;
+    data['rid'] = rid;
+    data['oid'] = oid;
     data['shiftNo'] = shiftNo;
-    data['shiftType'] = shiftType!.name;
     data['workingHours'] =
         workingHours?.map((shift) => shift.toJson()).toList();
     return data;
   }
 
-  // Method to get the shift description
   String getDescription() {
     final descriptions = workingHours
         ?.where((wh) => wh.isEnabled!)
         .map((wh) => '${wh.day}: ${wh.startTime != null ? WorkingHoursModel.timeOfDayToString(wh.startTime) : 'N/A'} - ${wh.endTime != null ? WorkingHoursModel.timeOfDayToString(wh.endTime) : 'N/A'}')
         .join(', ');
     return descriptions!.isEmpty ? 'No shifts scheduled' : descriptions;
+  }
+
+    ShiftModel copyWith({
+    String? sid,
+    String? rid,
+    String? oid,
+    int? shiftNo,
+    List<WorkingHoursModel>? workingHours,
+  }) {
+    return ShiftModel(
+      sid: sid ?? this.sid,
+      rid: rid ?? this.rid,
+      oid: oid ?? this.oid,
+      shiftNo: shiftNo ?? this.shiftNo,
+      workingHours: workingHours ?? this.workingHours,
+    );
   }
 }

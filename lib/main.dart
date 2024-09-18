@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/provider/auth_provider.dart';
-import 'package:food_couriers_admin/provider/checkbox_provider.dart';
+import 'package:food_couriers_admin/provider/shift_provider.dart';
 import 'package:food_couriers_admin/provider/ownerdata_provider.dart';
 import 'package:food_couriers_admin/provider/restaurant_provider.dart';
 import 'package:food_couriers_admin/provider/userdata_provider.dart';
@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserdataProvider()),
         ChangeNotifierProvider(create: (_) => OwnerdataProvider()),
         ChangeNotifierProvider(create: (_) => RestaurantProvider()),
-        ChangeNotifierProvider(create: (_) => CheckboxProvider()),
+        ChangeNotifierProvider(create: (_) => ShiftProvider()),
       ],
       builder: (context, child) {
         return ScreenUtilInit(

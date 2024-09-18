@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/provider/restaurant_provider.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_tab_bar.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/restaurant_management.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/working_hours.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/custom_progress_indicator.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -72,25 +74,25 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
             splashFactory: NoSplash.splashFactory,
             overlayColor: WidgetStateProperty.all(Colors.transparent),
             tabs: [
-              _buildTab(
+              CustomTabBar(
                 icon: Icons.badge_rounded,
                 text: 'Restaurant Management',
-                index: 0,
+                isSelected: _selectedIndex == 0,
               ),
-              _buildTab(
+              CustomTabBar(
                 icon: Icons.punch_clock_rounded,
                 text: 'Working Hours',
-                index: 1,
+                isSelected: _selectedIndex == 1,
               ),
-              _buildTab(
+              CustomTabBar(
                 icon: Icons.location_city_rounded,
                 text: 'Location',
-                index: 2,
+                isSelected: _selectedIndex == 2,
               ),
-              _buildTab(
+              CustomTabBar(
                 icon: Icons.monetization_on_rounded,
                 text: 'Plans',
-                index: 3,
+                isSelected: _selectedIndex == 3,
               ),
             ],
           ),
@@ -146,47 +148,6 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
     );
   }
 
-  Widget _buildTab({
-    required IconData icon,
-    required String text,
-    required int index,
-  }) {
-    return Container(
-      alignment: Alignment.center,
-      padding:
-          EdgeInsets.symmetric(horizontal: screenWidth! * 0.01, vertical: 10),
-      decoration: BoxDecoration(
-        color: _selectedIndex == index ? AppColors.primary : AppColors.white,
-        borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Icon(
-            icon,
-            size: screenWidth! * 0.0125,
-            color:
-                _selectedIndex == index ? AppColors.white : AppColors.primary,
-          ),
-          SizedBox(width: screenWidth! * 0.005),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: screenWidth! * 0.0115,
-              fontFamily: 'DM Sans',
-              color:
-                  _selectedIndex == index ? AppColors.white : AppColors.primary,
-              fontWeight: FontWeight.w400,
-              height: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildLoadingTab() {
     return
         // Stack(
@@ -196,12 +157,7 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
         //       left: 0,
         //       right: 0,
         //       child:
-        Center(
-      child: CircularProgressIndicator(
-        strokeWidth: screenWidth! * 0.0025,
-        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-      ),
-    )
+        const CustomProgressIndicator()
         // ,
         //     ),
         //   ],

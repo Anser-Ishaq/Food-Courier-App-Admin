@@ -43,6 +43,15 @@ TextStyle commonTextStyle(double fontSize, FontWeight fontWeight) {
   );
 }
 
+  OutlineInputBorder border() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(screenWidth! * 0.005),
+      borderSide: BorderSide(
+        color: AppColors.primary.withAlpha(200),
+      ),
+    );
+  }
+
 String formatDate(DateTime dateTime) {
   return DateFormat('EEEE, MMMM d, y h:mm a').format(dateTime);
 }

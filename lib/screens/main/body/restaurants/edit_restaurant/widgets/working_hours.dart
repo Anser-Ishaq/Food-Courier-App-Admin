@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/models/restaurant.dart';
 import 'package:food_couriers_admin/models/shift_model.dart';
+import 'package:food_couriers_admin/provider/restaurant_provider.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_tab_bar.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/save_button.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/provider/checkbox_provider.dart';
+import 'package:food_couriers_admin/provider/shift_provider.dart';
 
 class WorkingHours extends StatefulWidget {
   const WorkingHours({
@@ -21,59 +23,96 @@ class WorkingHours extends StatefulWidget {
 
 class _WorkingHoursState extends State<WorkingHours> {
   final _formKey = GlobalKey<FormState>();
+  final ValueNotifier<int> _selectedShift = ValueNotifier(0);
+  final int maxVisibleItems = 5;
 
-  late CheckboxProvider _checkboxProvider;
+  late ShiftProvider _shiftProvider;
+
+  String? updateShiftId;
+  int? updateShiftNo;
 
   @override
   void initState() {
     super.initState();
-    _checkboxProvider = Provider.of<CheckboxProvider>(context, listen: false);
+    _shiftProvider = Provider.of<ShiftProvider>(context, listen: false);
+    initialize();
+  }
+
+  void initialize() async {
+    await _shiftProvider.fetchShifts(widget.restaurant.shifts);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('Build');
     return Form(
       key: _formKey,
       child: Column(
         children: [
           _buildTitle(),
           _spacer(),
-          _spacer(),
-          StreamBuilder(
-            stream: _checkboxProvider.fetchShifts(widget.restaurant.shifts),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: screenWidth! * 0.0025,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(AppColors.primary),
-                  ),
-                );
-              }
-
-              // if (snapshot.data!.isEmpty) {
-              //   print('No shifts found');
-              //   return _buildShiftRowDummy(context);
-              // }
-
-              if (snapshot.data!.length == 1) {
-                final shift = snapshot.data![0];
-                return _buildShiftRow(shift);
-              }
-
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  final shift = snapshot.data![index];
-                  return Container();
-                },
-              );
+          Consumer<ShiftProvider>(
+            builder: (context, shiftProvider, child) {
+              return _shiftProvider.shifts == null ||
+                      _shiftProvider.shifts!.isEmpty
+                  ? _buildShiftRowDummy(context)
+                  : _shiftProvider.shifts!.length == 1
+                      ? _buildShiftRow(_shiftProvider.shifts![0])
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: screenWidth! * 0.04,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final itemWidth = (constraints.maxWidth /
+                                          (shiftProvider.shifts!.length >
+                                                  maxVisibleItems
+                                              ? maxVisibleItems
+                                              : shiftProvider.shifts!.length)) -
+                                      screenWidth! * 0.01;
+                                  return ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _shiftProvider.shifts!.length,
+                                    separatorBuilder: (context, index) {
+                                      return SizedBox(
+                                          width: screenWidth! * 0.015);
+                                    },
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          _selectedShift.value = index;
+                                        },
+                                        child: ValueListenableBuilder(
+                                          valueListenable: _selectedShift,
+                                          builder: (context, value, child) {
+                                            return SizedBox(
+                                              width: itemWidth,
+                                              child: CustomTabBar(
+                                                icon: Icons.calendar_today,
+                                                text: 'Shift ${index + 1}',
+                                                isSelected: value == index,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            _spacer(),
+                            ValueListenableBuilder(
+                              valueListenable: _selectedShift,
+                              builder: (context, value, child) {
+                                return _buildShiftRow(
+                                    _shiftProvider.shifts![value]);
+                              },
+                            ),
+                          ],
+                        );
             },
           ),
-          _spacer(),
           _spacer(),
           _buildSaveButton(),
         ],
@@ -97,10 +136,20 @@ class _WorkingHoursState extends State<WorkingHours> {
             wordSpacing: screenWidth! * 0.0125 * 0.05,
           ),
         ),
-        _buttonBox(
-          title: 'Add new shift',
-          onTap: () {
-            // _checkboxProvider.addShift();
+        Consumer2<RestaurantProvider, ShiftProvider>(
+          builder: (context, restaurantProvider, shiftProvider, child) {
+            return _buttonBox(
+              title: 'Add new shift',
+              isLoading:
+                  shiftProvider.isLoading || restaurantProvider.isLoading,
+              onTap: () async {
+                final shiftID = await _shiftProvider.addNewShift();
+                if (shiftID != null) {
+                  restaurantProvider.updateRestaurant(
+                      rid: widget.restaurant.rid!, newShiftID: shiftID);
+                }
+              },
+            );
           },
         ),
       ],
@@ -108,23 +157,25 @@ class _WorkingHoursState extends State<WorkingHours> {
   }
 
   Widget _buildShiftRowDummy(BuildContext context) {
-    return Consumer<CheckboxProvider>(
-      builder: (context, checkboxProvider, child) {
-        final shift = checkboxProvider.shift;
+    updateShiftId = null;
+    updateShiftNo = null;
+    return Consumer<ShiftProvider>(
+      builder: (context, shiftProvider, child) {
+        final shift = shiftProvider.shift;
         return ListView.separated(
           shrinkWrap: true,
-          itemCount: checkboxProvider.shift.workingHours!.length,
+          itemCount: shiftProvider.shift.workingHours!.length,
           separatorBuilder: (context, index) =>
               SizedBox(height: screenWidth! * 0.01),
           itemBuilder: (context, index) {
             return _singleShiftRow(
               workingHours: shift.workingHours![index],
               onChanged: (newValue) =>
-                  checkboxProvider.onChanged(null, index, newValue),
+                  shiftProvider.onChanged(null, index, newValue),
               onStartTimeSelected: (time) =>
-                  checkboxProvider.setStartTime(null, index, time),
+                  shiftProvider.setStartTime(null, index, time),
               onEndTimeSelected: (time) =>
-                  checkboxProvider.setEndTime(null, index, time),
+                  shiftProvider.setEndTime(null, index, time),
             );
           },
         );
@@ -133,6 +184,8 @@ class _WorkingHoursState extends State<WorkingHours> {
   }
 
   Widget _buildShiftRow(ShiftModel shift) {
+    updateShiftId = shift.sid;
+    updateShiftNo = shift.shiftNo;
     return ListView.separated(
       shrinkWrap: true,
       itemCount: shift.workingHours!.length,
@@ -142,11 +195,11 @@ class _WorkingHoursState extends State<WorkingHours> {
         return _singleShiftRow(
           workingHours: shift.workingHours![index],
           onChanged: (newValue) =>
-              _checkboxProvider.onChanged(shift.sid!, index, newValue),
+              _shiftProvider.onChanged(shift.shiftNo! - 1, index, newValue),
           onStartTimeSelected: (time) =>
-              _checkboxProvider.setStartTime(shift.sid!, index, time),
+              _shiftProvider.setStartTime(shift.shiftNo! - 1, index, time),
           onEndTimeSelected: (time) =>
-              _checkboxProvider.setEndTime(shift.sid!, index, time),
+              _shiftProvider.setEndTime(shift.shiftNo! - 1, index, time),
         );
       },
     );
@@ -284,22 +337,38 @@ class _WorkingHoursState extends State<WorkingHours> {
             size: screenWidth! * 0.0145,
           ),
         ),
-        border: _border(),
-        focusedBorder: _border(),
-        enabledBorder: _border(),
+        border: border(),
+        focusedBorder: border(),
+        enabledBorder: border(),
       ),
     );
   }
 
   Widget _buildSaveButton() {
-    return SaveButton(
-      isLoading: false,
-      onTap: () {},
-    );
+    return Consumer2<RestaurantProvider, ShiftProvider>(
+        builder: (context, restaurantProvider, shiftProvider, child) {
+      return SaveButton(
+        isLoading: restaurantProvider.isLoading || shiftProvider.isLoading,
+        onTap: () async {
+          if (updateShiftId != null && updateShiftNo != null) {
+            await shiftProvider.updateShift(updateShiftId!, updateShiftNo!);
+            return;
+          }
+          shiftProvider.shift.rid = widget.restaurant.rid;
+          shiftProvider.shift.oid = widget.restaurant.oid;
+          final shiftID = await shiftProvider.createShift(shiftProvider.shift);
+          restaurantProvider.updateRestaurant(
+            rid: widget.restaurant.rid!,
+            newShiftID: shiftID,
+          );
+        },
+      );
+    });
   }
 
   Widget _buttonBox({
     required String title,
+    required bool isLoading,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -315,29 +384,30 @@ class _WorkingHoursState extends State<WorkingHours> {
             width: screenWidth! * 0.001,
           ),
         ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: AppColors.white,
-            fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.01,
-            fontWeight: FontWeight.w600,
-            height: 1.1,
-            letterSpacing: -0.03 * screenWidth! * 0.01,
-          ),
-        ),
+        child: isLoading
+            ? SizedBox(
+                height: screenWidth! * 0.0075,
+                width: screenWidth! * 0.0075,
+                child: CircularProgressIndicator(
+                  strokeWidth: screenWidth! * 0.001,
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(AppColors.white),
+                ),
+              )
+            : Text(
+                title,
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontFamily: 'DM Sans',
+                  fontSize: screenWidth! * 0.01,
+                  fontWeight: FontWeight.w600,
+                  height: 1.1,
+                  letterSpacing: -0.03 * screenWidth! * 0.01,
+                ),
+              ),
       ),
     );
   }
 
-  OutlineInputBorder _border() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-      borderSide: BorderSide(
-        color: AppColors.primary.withAlpha(200),
-      ),
-    );
-  }
-
-  SizedBox _spacer() => SizedBox(height: screenWidth! * 0.02);
+  SizedBox _spacer() => SizedBox(height: screenWidth! * 0.04);
 }

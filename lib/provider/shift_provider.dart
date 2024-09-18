@@ -2,24 +2,26 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/models/shift_model.dart';
 import 'package:food_couriers_admin/services/database_service.dart';
-import 'package:get_it/get_it.dart'; // Import the DatabaseService
+import 'package:get_it/get_it.dart';
 
-class CheckboxProvider with ChangeNotifier {
+class ShiftProvider with ChangeNotifier {
   final GetIt _getIt = GetIt.instance;
   late DatabaseService _databaseService;
 
   ShiftModel? _selectedShift;
   bool _isLoading = false;
+  List<ShiftModel>? _shifts;
 
   ShiftModel? get selectedShift => _selectedShift;
   bool get isLoading => _isLoading;
+  List<ShiftModel>? get shifts => _shifts;
 
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  CheckboxProvider() {
+  ShiftProvider() {
     _databaseService = _getIt.get<DatabaseService>();
   }
 
@@ -29,7 +31,6 @@ class CheckboxProvider with ChangeNotifier {
     rid: null,
     oid: null,
     shiftNo: 1,
-    shiftType: ShiftType.morning,
     workingHours: [
       WorkingHoursModel(
         isEnabled: false,
@@ -78,41 +79,86 @@ class CheckboxProvider with ChangeNotifier {
 
   ShiftModel get shift => _shift;
 
-  // Existing methods
+  // Existing methods for handling shifts
   void onChanged(
-    String? sid,
+    int? indexShift,
     int indexWorkingHours,
     bool? newValue,
   ) {
-    _shift.workingHours![indexWorkingHours].isEnabled = newValue;
+    indexShift != null
+        ? _shifts![indexShift].workingHours![indexWorkingHours].isEnabled =
+            newValue
+        : _shift.workingHours![indexWorkingHours].isEnabled = newValue;
     notifyListeners();
   }
 
   void setStartTime(
-    String? sid,
+    int? indexShift,
     int indexWorkingHours,
     TimeOfDay? time,
   ) {
-    _shift.workingHours![indexWorkingHours].startTime = time;
+    indexShift != null
+        ? _shifts![indexShift].workingHours![indexWorkingHours].startTime = time
+        : _shift.workingHours![indexWorkingHours].startTime = time;
     notifyListeners();
   }
 
   void setEndTime(
-    String? sid,
+    int? indexShift,
     int indexWorkingHours,
     TimeOfDay? time,
   ) {
-    _shift.workingHours![indexWorkingHours].endTime = time;
+    indexShift != null
+        ? _shifts![indexShift].workingHours![indexWorkingHours].endTime = time
+        : _shift.workingHours![indexWorkingHours].endTime = time;
     notifyListeners();
   }
 
-  Stream<List<ShiftModel>?> fetchShifts(List<String>? shifts) {
-    return _databaseService.getAllShifts(shiftIDs: shifts).handleError((e) {
-      if (kDebugMode) print('Error fetching shifts: $e');
-      return null;
-    });
+  // Fetch shifts using Future (integrates with getAllShifts)
+  Future<void> fetchShifts(List<String>? shifts) async {
+    // _setLoading(true);
+    try {
+      _shifts = await _databaseService.getAllShifts(shiftIDs: shifts);
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching shifts: $e');
+      }
+      _shifts = null;
+    } finally {
+      // _setLoading(false);
+    }
   }
 
+    Future<String?> addNewShift() async {
+    _setLoading(true);
+    try {
+      final newShift = ShiftModel(
+        sid: null,
+        rid: _shifts![0].rid,
+        oid: _shifts![0].oid,
+        shiftNo: (_shifts?.length ?? 0) + 1,
+        workingHours: _shift.workingHours,
+      );
+
+      final newShiftId = await _databaseService.createShift(shift: newShift);
+
+      if (_shifts != null) {
+        _shifts!.add(newShift.copyWith(sid: newShiftId));
+        notifyListeners();
+      }
+
+      if (kDebugMode) print('New shift added with ID: $newShiftId');
+      return newShiftId;
+    } catch (e) {
+      if (kDebugMode) print('Error adding new shift: $e');
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Create shift
   Future<String> createShift(ShiftModel shift) async {
     _setLoading(true);
     try {
@@ -127,17 +173,20 @@ class CheckboxProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateShift(int index) async {
-    final shift = _shift;
-    if (shift.sid == null) return;
-
+  // Update shift
+  Future<void> updateShift(String sid,int shiftNo) async {
+    _setLoading(true);
     try {
-      await _databaseService.updateShift(sid: shift.sid!);
+      final shift = _shifts![shiftNo - 1];
+      await _databaseService.updateShift(sid: shift.sid!, shift: shift);
     } catch (e) {
       if (kDebugMode) print('Error updating shift: $e');
+    } finally {
+      _setLoading(false);
     }
   }
 
+  // Delete shift
   Future<void> deleteShift(int index) async {
     final shift = _shift;
     if (shift.sid == null) return;

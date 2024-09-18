@@ -258,13 +258,14 @@ class DatabaseService {
 
   Future<void> updateShift({
     required String sid,
+    required ShiftModel shift,
   }) async {
     try {
-      Map<String, dynamic> data = {};
+      Map<String, dynamic> data = shift.toJson();
 
       await _shiftsCollection.doc(sid).update(data);
     } catch (e) {
-      if (kDebugMode) print("Error updating shift: $e");
+      if (kDebugMode) print("Error updating shiftt: $e");
     }
   }
 
@@ -276,28 +277,29 @@ class DatabaseService {
     }
   }
 
-  Stream<List<ShiftModel>?> getAllShifts({
+  Future<List<ShiftModel>?> getAllShifts({
     required List<String>? shiftIDs,
-  }) {
+  }) async {
     if (shiftIDs == null || shiftIDs.isEmpty) {
-      return Stream.value([]);
+      return [];
     }
 
-    return _shiftsCollection
-        .where('sid', whereIn: shiftIDs)
-        .orderBy('shiftNo')
-        .snapshots()
-        .map((querySnapshot) {
+    try {
+      final querySnapshot = await _shiftsCollection
+          .where('sid', whereIn: shiftIDs)
+          .orderBy('shiftNo')
+          .get();
+
       if (querySnapshot.docs.isEmpty) {
         return null;
       }
 
       return querySnapshot.docs.map((doc) => doc.data()).toList();
-    }).handleError((e) {
+    } catch (e) {
       if (kDebugMode) {
         print("Error getting all shifts: $e");
       }
       return null;
-    });
+    }
   }
 }
