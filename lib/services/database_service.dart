@@ -171,6 +171,7 @@ class DatabaseService {
     String? ownerPhoneISOCode,
     String? ownerPhone,
     String? shiftID,
+    String? deleteShiftID,
   }) async {
     try {
       Map<String, dynamic> data = {};
@@ -196,6 +197,9 @@ class DatabaseService {
       }
       if (ownerPhone != null) data['ownerPhone'] = ownerPhone;
       if (shiftID != null) data['shifts'] = FieldValue.arrayUnion([shiftID]);
+      if (deleteShiftID != null) {
+        data['shifts'] = FieldValue.arrayRemove([deleteShiftID]);
+      }
 
       await _restaurantsCollection.doc(rid).update(data);
     } catch (e) {
@@ -287,7 +291,6 @@ class DatabaseService {
     try {
       final querySnapshot = await _shiftsCollection
           .where('sid', whereIn: shiftIDs)
-          .orderBy('shiftNo')
           .get();
 
       if (querySnapshot.docs.isEmpty) {

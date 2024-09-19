@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/provider/restaurant_provider.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_tab_bar.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/location.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/plans.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/restaurant_management.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/working_hours.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/custom_progress_indicator.dart';
@@ -25,7 +27,7 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
   late TabController _tabController;
   late RestaurantProvider _restaurantProvider;
 
-  int _selectedIndex = 0;
+  final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   bool _isLoading = true;
 
   @override
@@ -33,9 +35,9 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(() {
-      setState(() {
-        _selectedIndex = _tabController.index;
-      });
+      // setState(() {
+      _selectedIndex.value = _tabController.index;
+      // });
     });
     _restaurantProvider =
         Provider.of<RestaurantProvider>(context, listen: false);
@@ -64,38 +66,42 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TabBar(
-            controller: _tabController,
-            padding: const EdgeInsets.all(0),
-            labelPadding:
-                EdgeInsets.symmetric(horizontal: screenWidth! * 0.007),
-            indicator: const BoxDecoration(),
-            dividerColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            overlayColor: WidgetStateProperty.all(Colors.transparent),
-            tabs: [
-              CustomTabBar(
-                icon: Icons.badge_rounded,
-                text: 'Restaurant Management',
-                isSelected: _selectedIndex == 0,
-              ),
-              CustomTabBar(
-                icon: Icons.punch_clock_rounded,
-                text: 'Working Hours',
-                isSelected: _selectedIndex == 1,
-              ),
-              CustomTabBar(
-                icon: Icons.location_city_rounded,
-                text: 'Location',
-                isSelected: _selectedIndex == 2,
-              ),
-              CustomTabBar(
-                icon: Icons.monetization_on_rounded,
-                text: 'Plans',
-                isSelected: _selectedIndex == 3,
-              ),
-            ],
-          ),
+          ValueListenableBuilder(
+              valueListenable: _selectedIndex,
+              builder: (context, value, child) {
+                return TabBar(
+                  controller: _tabController,
+                  padding: const EdgeInsets.all(0),
+                  labelPadding:
+                      EdgeInsets.symmetric(horizontal: screenWidth! * 0.007),
+                  indicator: const BoxDecoration(),
+                  dividerColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  tabs: [
+                    CustomTabBar(
+                      icon: Icons.badge_rounded,
+                      text: 'Restaurant Management',
+                      isSelected: value == 0,
+                    ),
+                    CustomTabBar(
+                      icon: Icons.punch_clock_rounded,
+                      text: 'Working Hours',
+                      isSelected: value == 1,
+                    ),
+                    CustomTabBar(
+                      icon: Icons.location_city_rounded,
+                      text: 'Location',
+                      isSelected: value == 2,
+                    ),
+                    CustomTabBar(
+                      icon: Icons.monetization_on_rounded,
+                      text: 'Plans',
+                      isSelected: value == 3,
+                    ),
+                  ],
+                );
+              }),
           Container(
             margin: EdgeInsets.all(screenWidth! * 0.007),
             padding: EdgeInsets.all(screenWidth! * 0.02),
@@ -108,15 +114,26 @@ class _EditRestaurantScreenState extends State<EditRestaurantScreen>
             ),
             child: _isLoading
                 ? _buildLoadingTab()
-                : _selectedIndex == 0
-                    ? RestaurantManagement(
-                        restaurant: _restaurantProvider.selectedRestaurant!)
-                    : _selectedIndex == 1
-                        ? WorkingHours(
-                            restaurant: _restaurantProvider.selectedRestaurant!)
-                        : _selectedIndex == 2
-                            ? Text('Location')
-                            : Text('Plan'),
+                : ValueListenableBuilder(
+                    valueListenable: _selectedIndex,
+                    builder: (context, value, child) {
+                      return value == 0
+                          ? RestaurantManagement(
+                              restaurant:
+                                  _restaurantProvider.selectedRestaurant!)
+                          : value == 1
+                              ? WorkingHours(
+                                  restaurant:
+                                      _restaurantProvider.selectedRestaurant!)
+                              : value == 2
+                                  ? Location(
+                                      restaurant: _restaurantProvider
+                                          .selectedRestaurant!)
+                                  : Plans(
+                                      restaurant: _restaurantProvider
+                                          .selectedRestaurant!);
+                    },
+                  ),
             // child: TabBarView(
             //   controller: _tabController,
             //   physics: const NeverScrollableScrollPhysics(),

@@ -10,14 +10,21 @@ class ShiftProvider with ChangeNotifier {
 
   ShiftModel? _selectedShift;
   bool _isLoading = false;
+  bool _isDeleting = false;
   List<ShiftModel>? _shifts;
 
   ShiftModel? get selectedShift => _selectedShift;
   bool get isLoading => _isLoading;
+  bool get isDeleting => _isDeleting;
   List<ShiftModel>? get shifts => _shifts;
 
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void _setDeleting(bool value) {
+    _isDeleting = value;
     notifyListeners();
   }
 
@@ -30,7 +37,6 @@ class ShiftProvider with ChangeNotifier {
     sid: null,
     rid: null,
     oid: null,
-    shiftNo: 1,
     workingHours: [
       WorkingHoursModel(
         isEnabled: false,
@@ -114,22 +120,6 @@ class ShiftProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Fetch shifts using Future (integrates with getAllShifts)
-  Future<void> fetchShifts(List<String>? shifts) async {
-    // _setLoading(true);
-    try {
-      _shifts = await _databaseService.getAllShifts(shiftIDs: shifts);
-      notifyListeners();
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching shifts: $e');
-      }
-      _shifts = null;
-    } finally {
-      // _setLoading(false);
-    }
-  }
-
     Future<String?> addNewShift() async {
     _setLoading(true);
     try {
@@ -137,7 +127,6 @@ class ShiftProvider with ChangeNotifier {
         sid: null,
         rid: _shifts![0].rid,
         oid: _shifts![0].oid,
-        shiftNo: (_shifts?.length ?? 0) + 1,
         workingHours: _shift.workingHours,
       );
 
@@ -158,6 +147,22 @@ class ShiftProvider with ChangeNotifier {
     }
   }
 
+  // Fetch shifts using Future (integrates with getAllShifts)
+  Future<void> fetchShifts(List<String>? shifts) async {
+    // _setLoading(true);
+    try {
+      _shifts = await _databaseService.getAllShifts(shiftIDs: shifts);
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching shifts: $e');
+      }
+      _shifts = null;
+    } finally {
+      // _setLoading(false);
+    }
+  }
+
   // Create shift
   Future<String> createShift(ShiftModel shift) async {
     _setLoading(true);
@@ -174,10 +179,10 @@ class ShiftProvider with ChangeNotifier {
   }
 
   // Update shift
-  Future<void> updateShift(String sid,int shiftNo) async {
+  Future<void> updateShift(String sid, int indexShift) async {
     _setLoading(true);
     try {
-      final shift = _shifts![shiftNo - 1];
+      final shift = _shifts![indexShift];
       await _databaseService.updateShift(sid: shift.sid!, shift: shift);
     } catch (e) {
       if (kDebugMode) print('Error updating shift: $e');
@@ -187,15 +192,16 @@ class ShiftProvider with ChangeNotifier {
   }
 
   // Delete shift
-  Future<void> deleteShift(int index) async {
-    final shift = _shift;
-    if (shift.sid == null) return;
-
+  Future<void> deleteShift(String sid, int indexShift) async {
+    _setDeleting(true);
     try {
-      await _databaseService.deleteShift(sid: shift.sid!);
+      shifts!.removeAt(indexShift);
+      await _databaseService.deleteShift(sid: sid);
       notifyListeners();
     } catch (e) {
       if (kDebugMode) print('Error deleting shift: $e');
+    } finally {
+      _setDeleting(false);
     }
   }
 }

@@ -64,14 +64,12 @@ class ShiftModel {
   String? sid;
   String? rid;
   String? oid;
-  int? shiftNo;
   List<WorkingHoursModel>? workingHours;
 
   ShiftModel({
     required this.sid,
     required this.rid,
     required this.oid,
-    required this.shiftNo,
     required this.workingHours,
   });
 
@@ -80,7 +78,6 @@ class ShiftModel {
       sid: json['sid'],
       rid: json['rid'],
       oid: json['oid'],
-      shiftNo: json['shiftNo'],
       workingHours: (json['workingHours'] as List)
           .map((shift) => WorkingHoursModel.fromJson(shift))
           .toList(),
@@ -92,7 +89,6 @@ class ShiftModel {
     data['sid'] = sid;
     data['rid'] = rid;
     data['oid'] = oid;
-    data['shiftNo'] = shiftNo;
     data['workingHours'] =
         workingHours?.map((shift) => shift.toJson()).toList();
     return data;
@@ -110,14 +106,12 @@ class ShiftModel {
     String? sid,
     String? rid,
     String? oid,
-    int? shiftNo,
     List<WorkingHoursModel>? workingHours,
   }) {
     return ShiftModel(
       sid: sid ?? this.sid,
       rid: rid ?? this.rid,
       oid: oid ?? this.oid,
-      shiftNo: shiftNo ?? this.shiftNo,
       workingHours: workingHours ?? this.workingHours,
     );
   }

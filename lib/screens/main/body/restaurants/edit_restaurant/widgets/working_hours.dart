@@ -3,6 +3,9 @@ import 'package:food_couriers_admin/models/restaurant.dart';
 import 'package:food_couriers_admin/models/shift_model.dart';
 import 'package:food_couriers_admin/provider/restaurant_provider.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_tab_bar.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_title_row.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/button_box.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/custom_progress_indicator.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/save_button.dart';
 import 'package:food_couriers_admin/utils.dart';
 import 'package:provider/provider.dart';
@@ -24,12 +27,13 @@ class WorkingHours extends StatefulWidget {
 class _WorkingHoursState extends State<WorkingHours> {
   final _formKey = GlobalKey<FormState>();
   final ValueNotifier<int> _selectedShift = ValueNotifier(0);
+  final ValueNotifier<bool> _isDeletingShift = ValueNotifier(false);
   final int maxVisibleItems = 5;
 
   late ShiftProvider _shiftProvider;
 
   String? updateShiftId;
-  int? updateShiftNo;
+  int? updateShiftIndex;
 
   @override
   void initState() {
@@ -52,113 +56,141 @@ class _WorkingHoursState extends State<WorkingHours> {
           _spacer(),
           Consumer<ShiftProvider>(
             builder: (context, shiftProvider, child) {
-              return _shiftProvider.shifts == null ||
-                      _shiftProvider.shifts!.isEmpty
+              return shiftProvider.shifts == null ||
+                      shiftProvider.shifts!.isEmpty
                   ? _buildShiftRowDummy(context)
-                  : _shiftProvider.shifts!.length == 1
-                      ? _buildShiftRow(_shiftProvider.shifts![0])
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              height: screenWidth! * 0.04,
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  final itemWidth = (constraints.maxWidth /
-                                          (shiftProvider.shifts!.length >
-                                                  maxVisibleItems
-                                              ? maxVisibleItems
-                                              : shiftProvider.shifts!.length)) -
-                                      screenWidth! * 0.01;
-                                  return ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _shiftProvider.shifts!.length,
-                                    separatorBuilder: (context, index) {
-                                      return SizedBox(
-                                          width: screenWidth! * 0.015);
-                                    },
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          _selectedShift.value = index;
-                                        },
-                                        child: ValueListenableBuilder(
-                                          valueListenable: _selectedShift,
-                                          builder: (context, value, child) {
-                                            return SizedBox(
-                                              width: itemWidth,
-                                              child: CustomTabBar(
-                                                icon: Icons.calendar_today,
-                                                text: 'Shift ${index + 1}',
-                                                isSelected: value == index,
-                                              ),
+                  : shiftProvider.shifts!.length == 1
+                      ? _buildShiftRow(shiftProvider.shifts![0], 0)
+                      : ValueListenableBuilder(
+                          valueListenable: _isDeletingShift,
+                          builder: (context, value, child) {
+                            return value
+                                ? const CustomProgressIndicator()
+                                : Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        height: screenWidth! * 0.04,
+                                        child: LayoutBuilder(
+                                          builder: (context, constraints) {
+                                            final itemWidth =
+                                                (constraints.maxWidth /
+                                                        (shiftProvider.shifts!
+                                                                    .length >
+                                                                maxVisibleItems
+                                                            ? maxVisibleItems
+                                                            : shiftProvider
+                                                                .shifts!
+                                                                .length)) -
+                                                    screenWidth! * 0.01;
+                                            return ListView.separated(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount:
+                                                  shiftProvider.shifts!.length,
+                                              separatorBuilder:
+                                                  (context, index) {
+                                                return SizedBox(
+                                                    width:
+                                                        screenWidth! * 0.015);
+                                              },
+                                              itemBuilder: (context, index) {
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    _selectedShift.value =
+                                                        index;
+                                                  },
+                                                  child: ValueListenableBuilder(
+                                                    valueListenable:
+                                                        _selectedShift,
+                                                    builder: (context, value,
+                                                        child) {
+                                                      return SizedBox(
+                                                        width: itemWidth,
+                                                        child: CustomTabBar(
+                                                          icon: Icons
+                                                              .calendar_today,
+                                                          text:
+                                                              'Shift ${index + 1}',
+                                                          isSelected:
+                                                              value == index,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              },
                                             );
                                           },
                                         ),
-                                      );
-                                    },
+                                      ),
+                                      _spacer(),
+                                      ValueListenableBuilder(
+                                        valueListenable: _selectedShift,
+                                        builder: (context, value, child) {
+                                          return _buildShiftRow(
+                                              _shiftProvider.shifts![value],
+                                              value);
+                                        },
+                                      ),
+                                    ],
                                   );
-                                },
-                              ),
-                            ),
-                            _spacer(),
-                            ValueListenableBuilder(
-                              valueListenable: _selectedShift,
-                              builder: (context, value, child) {
-                                return _buildShiftRow(
-                                    _shiftProvider.shifts![value]);
-                              },
-                            ),
-                          ],
+                          },
                         );
             },
           ),
           _spacer(),
-          _buildSaveButton(),
+          Consumer<ShiftProvider>(
+            builder: (context, shiftProvider, child) {
+              return shiftProvider.shifts != null &&
+                      shiftProvider.shifts!.length > 1
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildSaveButton(isDelete: true),
+                        SizedBox(width: screenWidth! * 0.015),
+                        _buildSaveButton(isDelete: false),
+                      ],
+                    )
+                  : _buildSaveButton(isDelete: false);
+            },
+          ),
         ],
       ),
     );
   }
 
   Widget _buildTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Working Hours',
-          style: TextStyle(
-            color: AppColors.textDarkColor,
-            fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.0135,
-            fontWeight: FontWeight.w600,
-            height: 1.1,
-            letterSpacing: screenWidth! * 0.0125 * -0.01,
-            wordSpacing: screenWidth! * 0.0125 * 0.05,
-          ),
-        ),
-        Consumer2<RestaurantProvider, ShiftProvider>(
-          builder: (context, restaurantProvider, shiftProvider, child) {
-            return _buttonBox(
-              title: 'Add new shift',
-              isLoading:
-                  shiftProvider.isLoading || restaurantProvider.isLoading,
-              onTap: () async {
-                final shiftID = await _shiftProvider.addNewShift();
-                if (shiftID != null) {
-                  restaurantProvider.updateRestaurant(
-                      rid: widget.restaurant.rid!, newShiftID: shiftID);
+    return CustomTitleRow(
+      title: 'Working Hours',
+      showButton1: true,
+      showButton2: false,
+      button1: Consumer2<RestaurantProvider, ShiftProvider>(
+        builder: (context, restaurantProvider, shiftProvider, child) {
+          return ButtonBox(
+            title: 'Add new shift',
+            isLoading: shiftProvider.isLoading || restaurantProvider.isLoading,
+            onTap: () async {
+              final shiftID = await _shiftProvider.addNewShift();
+              if (shiftID != null) {
+                if (!widget.restaurant.shifts!.contains(shiftID)) {
+                  widget.restaurant.shifts!.add(shiftID);
                 }
-              },
-            );
-          },
-        ),
-      ],
+                restaurantProvider.updateRestaurant(
+                  rid: widget.restaurant.rid!,
+                  newShiftID: shiftID,
+                );
+              }
+            },
+          );
+        },
+      ),
     );
   }
 
   Widget _buildShiftRowDummy(BuildContext context) {
     updateShiftId = null;
-    updateShiftNo = null;
+    updateShiftIndex = null;
     return Consumer<ShiftProvider>(
       builder: (context, shiftProvider, child) {
         final shift = shiftProvider.shift;
@@ -183,9 +215,9 @@ class _WorkingHoursState extends State<WorkingHours> {
     );
   }
 
-  Widget _buildShiftRow(ShiftModel shift) {
+  Widget _buildShiftRow(ShiftModel shift, int indexShift) {
     updateShiftId = shift.sid;
-    updateShiftNo = shift.shiftNo;
+    updateShiftIndex = indexShift;
     return ListView.separated(
       shrinkWrap: true,
       itemCount: shift.workingHours!.length,
@@ -195,11 +227,11 @@ class _WorkingHoursState extends State<WorkingHours> {
         return _singleShiftRow(
           workingHours: shift.workingHours![index],
           onChanged: (newValue) =>
-              _shiftProvider.onChanged(shift.shiftNo! - 1, index, newValue),
+              _shiftProvider.onChanged(indexShift, index, newValue),
           onStartTimeSelected: (time) =>
-              _shiftProvider.setStartTime(shift.shiftNo! - 1, index, time),
+              _shiftProvider.setStartTime(indexShift, index, time),
           onEndTimeSelected: (time) =>
-              _shiftProvider.setEndTime(shift.shiftNo! - 1, index, time),
+              _shiftProvider.setEndTime(indexShift, index, time),
         );
       },
     );
@@ -344,68 +376,58 @@ class _WorkingHoursState extends State<WorkingHours> {
     );
   }
 
-  Widget _buildSaveButton() {
+  Widget _buildSaveButton({required bool isDelete}) {
     return Consumer2<RestaurantProvider, ShiftProvider>(
-        builder: (context, restaurantProvider, shiftProvider, child) {
-      return SaveButton(
-        isLoading: restaurantProvider.isLoading || shiftProvider.isLoading,
-        onTap: () async {
-          if (updateShiftId != null && updateShiftNo != null) {
-            await shiftProvider.updateShift(updateShiftId!, updateShiftNo!);
-            return;
-          }
-          shiftProvider.shift.rid = widget.restaurant.rid;
-          shiftProvider.shift.oid = widget.restaurant.oid;
-          final shiftID = await shiftProvider.createShift(shiftProvider.shift);
-          restaurantProvider.updateRestaurant(
-            rid: widget.restaurant.rid!,
-            newShiftID: shiftID,
-          );
-        },
-      );
-    });
-  }
+      builder: (context, restaurantProvider, shiftProvider, child) {
+        return SaveButton(
+          buttonText: isDelete ? 'Delete' : 'Save',
+          gradient:
+              isDelete ? AppColors.gradientPrimary : AppColors.gradientGreen,
+          isLoading: isDelete
+              ? restaurantProvider.isLoading || shiftProvider.isDeleting
+              : restaurantProvider.isLoading || shiftProvider.isLoading,
+          onTap: isDelete
+              ? () async {
+                  _isDeletingShift.value = true;
+                  final deleteableShiftID = updateShiftId!;
+                  final deleteableShiftIndex = updateShiftIndex!;
+                  await shiftProvider.deleteShift(
+                      deleteableShiftID, deleteableShiftIndex);
 
-  Widget _buttonBox({
-    required String title,
-    required bool isLoading,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: screenWidth! * 0.004),
-        padding: EdgeInsets.all(screenWidth! * 0.007),
-        decoration: BoxDecoration(
-          color: AppColors.secondary,
-          borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-          border: Border.all(
-            color: AppColors.secondary,
-            width: screenWidth! * 0.001,
-          ),
-        ),
-        child: isLoading
-            ? SizedBox(
-                height: screenWidth! * 0.0075,
-                width: screenWidth! * 0.0075,
-                child: CircularProgressIndicator(
-                  strokeWidth: screenWidth! * 0.001,
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(AppColors.white),
-                ),
-              )
-            : Text(
-                title,
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontFamily: 'DM Sans',
-                  fontSize: screenWidth! * 0.01,
-                  fontWeight: FontWeight.w600,
-                  height: 1.1,
-                  letterSpacing: -0.03 * screenWidth! * 0.01,
-                ),
-              ),
-      ),
+                  final shifts = widget.restaurant.shifts!;
+                  shifts.remove(deleteableShiftID);
+                  widget.restaurant.shifts = shifts;
+                  await restaurantProvider.updateRestaurant(
+                      rid: widget.restaurant.rid!,
+                      oldShiftID: deleteableShiftID);
+                  if (_selectedShift.value >= shiftProvider.shifts!.length) {
+                    _selectedShift.value = 0;
+                  }
+                  await shiftProvider.fetchShifts(widget.restaurant.shifts);
+                  _isDeletingShift.value = false;
+                }
+              : () async {
+                  if (updateShiftId != null && updateShiftIndex != null) {
+                    await shiftProvider.updateShift(
+                        updateShiftId!, updateShiftIndex!);
+                    shiftProvider.fetchShifts(widget.restaurant.shifts);
+                    return;
+                  }
+                  shiftProvider.shift.rid = widget.restaurant.rid;
+                  shiftProvider.shift.oid = widget.restaurant.oid;
+                  final shiftID =
+                      await shiftProvider.createShift(shiftProvider.shift);
+                  if (!widget.restaurant.shifts!.contains(shiftID)) {
+                    widget.restaurant.shifts!.add(shiftID);
+                  }
+                  restaurantProvider.updateRestaurant(
+                    rid: widget.restaurant.rid!,
+                    newShiftID: shiftID,
+                  );
+                  shiftProvider.fetchShifts(widget.restaurant.shifts);
+                },
+        );
+      },
     );
   }
 

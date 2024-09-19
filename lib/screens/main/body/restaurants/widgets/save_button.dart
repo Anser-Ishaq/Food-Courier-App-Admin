@@ -7,8 +7,12 @@ class SaveButton extends StatelessWidget {
     super.key,
     required this.isLoading,
     required this.onTap,
+    required this.buttonText,
+    this.gradient,
   });
 
+  final String buttonText;
+  final Gradient? gradient;
   final bool isLoading;
   final VoidCallback onTap;
 
@@ -22,7 +26,7 @@ class SaveButton extends StatelessWidget {
           padding: EdgeInsets.symmetric(
               horizontal: screenWidth! * 0.015, vertical: screenWidth! * 0.005),
           decoration: BoxDecoration(
-            gradient: AppColors.gradientPrimary,
+            gradient: gradient,
             borderRadius: BorderRadius.circular(screenWidth! * 0.005),
           ),
           child: isLoading
@@ -36,7 +40,7 @@ class SaveButton extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Save',
+                      buttonText,
                       style: TextStyle(
                         color: AppColors.white,
                         fontSize: screenWidth! * 0.015,

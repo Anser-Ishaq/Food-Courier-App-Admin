@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/button_box.dart';
 import 'package:food_couriers_admin/utils.dart';
 
 class RestaurantHead extends StatelessWidget {
@@ -25,12 +26,12 @@ class RestaurantHead extends StatelessWidget {
         ),
         Row(
           children: [
-            _buttonBox(
+            ButtonBox(
               title: 'Add Restaurant',
               isOutline: false,
               onTap: onAddRestaurant,
             ),
-            _buttonBox(
+            ButtonBox(
               title: 'Export CSV',
               isOutline: true,
               onTap: () {},
@@ -80,39 +81,6 @@ class RestaurantHead extends StatelessWidget {
           icon,
           color: AppColors.textDarkColor,
           size: screenWidth! * 0.02,
-        ),
-      ),
-    );
-  }
-
-  Widget _buttonBox({
-    required String title,
-    required bool isOutline,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: screenWidth! * 0.004),
-        padding: EdgeInsets.all(screenWidth! * 0.007),
-        decoration: BoxDecoration(
-          color: isOutline ? AppColors.white : AppColors.primary,
-          borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-          border: Border.all(
-            color: AppColors.primary,
-            width: screenWidth! * 0.001,
-          ),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: isOutline ? AppColors.primary : AppColors.white,
-            fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.01,
-            fontWeight: FontWeight.w600,
-            height: 1.1,
-            letterSpacing: -0.03 * screenWidth! * 0.01,
-          ),
         ),
       ),
     );

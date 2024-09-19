@@ -28,6 +28,15 @@ class AppColors {
     Color(0xFFFF0000),
     Color(0xFFFFB4B4),
   ]);
+  static const LinearGradient gradientGreen = LinearGradient(
+  colors: [
+    Color(0xFF00C853),
+    Color(0xFFB9F6CA),
+  ],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  stops: [0.65, 1],
+);
   static const Color inactiveDotColor = Color(0xFFE6E6E6);
   static const LinearGradient gradientTextDarkColor = LinearGradient(
   colors: [

@@ -142,6 +142,8 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
   Widget _saveButton(BuildContext context,
       RestaurantProvider restaurantProvider, OwnerdataProvider ownerProvider) {
     return SaveButton(
+      buttonText: 'Save',
+      gradient: AppColors.gradientGreen,
       isLoading: restaurantProvider.isLoading || ownerProvider.isLoading,
       onTap: () async {
         if (_formKey.currentState?.validate() ?? false) {

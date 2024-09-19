@@ -10,11 +10,13 @@ class RestaurantProvider with ChangeNotifier {
   List<Restaurant>? _restaurants;
   Restaurant? _selectedRestaurant;
   bool _isLoading = false;
+  bool _isDeleting = false;
   String? _errorMessage;
 
   List<Restaurant>? get restaurants => _restaurants;
   Restaurant? get selectedRestaurant => _selectedRestaurant;
   bool get isLoading => _isLoading;
+  bool get isDeleting => _isDeleting;
   String? get errorMessage => _errorMessage;
 
   RestaurantProvider() {
@@ -84,6 +86,7 @@ class RestaurantProvider with ChangeNotifier {
     String? newOwnerPhone,
     bool? newActive,
     String? newShiftID,
+    String? oldShiftID,
   }) async {
     _setLoading(true);
     try {
@@ -106,6 +109,7 @@ class RestaurantProvider with ChangeNotifier {
         ownerPhone: newOwnerPhone,
         active: newActive,
         shiftID: newShiftID,
+        deleteShiftID: oldShiftID,
       );
       fetchRestaurants();
       if (kDebugMode) print('Restaurant updated successfully!');
@@ -117,7 +121,7 @@ class RestaurantProvider with ChangeNotifier {
   }
 
   Future<void> deleteRestaurant(String rid) async {
-    _setLoading(true);
+    _setDeleting(true);
     try {
       await _databaseService.deleteRestaurant(rid: rid);
       fetchRestaurants();
@@ -125,12 +129,17 @@ class RestaurantProvider with ChangeNotifier {
     } catch (e) {
       _handleError(e);
     } finally {
-      _setLoading(false);
+      _setDeleting(false);
     }
   }
 
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void _setDeleting(bool value) {
+    _isDeleting = value;
     notifyListeners();
   }
 

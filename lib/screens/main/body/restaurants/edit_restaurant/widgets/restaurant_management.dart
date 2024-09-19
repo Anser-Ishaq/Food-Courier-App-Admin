@@ -3,6 +3,8 @@ import 'package:food_couriers_admin/constants/colors/app_colors.dart';
 import 'package:food_couriers_admin/models/restaurant.dart';
 import 'package:food_couriers_admin/provider/ownerdata_provider.dart';
 import 'package:food_couriers_admin/provider/restaurant_provider.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_title_row.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/button_box.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/divider.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/phone_number_input.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/restaurant_details_text_field.dart';
@@ -124,34 +126,18 @@ class _RestaurantManagementState extends State<RestaurantManagement> {
   }
 
   Widget _buildTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Restaurant Management',
-          style: TextStyle(
-            color: AppColors.textDarkColor,
-            fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.0135,
-            fontWeight: FontWeight.w600,
-            height: 1.1,
-            letterSpacing: screenWidth! * 0.0125 * -0.01,
-            wordSpacing: screenWidth! * 0.0125 * 0.05,
-          ),
-        ),
-        Row(
-          children: [
-            _buttonBox(
-              title: 'View it',
-              onTap: () {},
-            ),
-            _buttonBox(
-              title: 'Login as',
-              onTap: () {},
-            ),
-          ],
-        ),
-      ],
+    return CustomTitleRow(
+      title: 'Restaurant Management',
+      showButton1: true,
+      showButton2: true,
+      button1: ButtonBox(
+        title: 'View it',
+        onTap: () {},
+      ),
+      button2: ButtonBox(
+        title: 'Login as',
+        onTap: () {},
+      ),
     );
   }
 
@@ -336,6 +322,8 @@ class _RestaurantManagementState extends State<RestaurantManagement> {
     return Consumer2<RestaurantProvider, OwnerdataProvider>(
       builder: (context, restaurantProvider, ownerProvider, child) {
         return SaveButton(
+          buttonText: 'Save',
+          gradient: AppColors.gradientGreen,
           isLoading: restaurantProvider.isLoading || ownerProvider.isLoading,
           onTap: () async {
             if (restaurantProvider.isLoading || ownerProvider.isLoading) return;
@@ -409,38 +397,6 @@ class _RestaurantManagementState extends State<RestaurantManagement> {
           },
         );
       },
-    );
-  }
-
-  Widget _buttonBox({
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: screenWidth! * 0.004),
-        padding: EdgeInsets.all(screenWidth! * 0.007),
-        decoration: BoxDecoration(
-          color: AppColors.secondary,
-          borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-          border: Border.all(
-            color: AppColors.secondary,
-            width: screenWidth! * 0.001,
-          ),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: AppColors.white,
-            fontFamily: 'DM Sans',
-            fontSize: screenWidth! * 0.01,
-            fontWeight: FontWeight.w600,
-            height: 1.1,
-            letterSpacing: -0.03 * screenWidth! * 0.01,
-          ),
-        ),
-      ),
     );
   }
 
