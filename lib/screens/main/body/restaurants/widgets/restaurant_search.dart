@@ -1,9 +1,9 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/images/images.dart';
+import 'package:food_couriers_admin/res/images/images.dart';
 import 'package:food_couriers_admin/models/restaurant.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 
 class RestaurantSearch extends StatefulWidget {
   final bool showSearch;
@@ -50,9 +50,9 @@ class _RestaurantSearchState extends State<RestaurantSearch> {
                     horizontal: screenWidth! * 0.007,
                     vertical: screenWidth! * 0.008,
                   ),
-                  border: _commonBorder(),
-                  enabledBorder: _commonBorder(),
-                  focusedBorder: _commonBorder(),
+                  border: border(),
+                  enabledBorder: border(),
+                  focusedBorder: border(),
                 ),
               ),
               dropdownButtonProps: DropdownButtonProps(
@@ -99,9 +99,9 @@ class _RestaurantSearchState extends State<RestaurantSearch> {
                       horizontal: screenWidth! * 0.005,
                       vertical: screenWidth! * 0.008,
                     ),
-                    border: _commonBorder(),
-                    enabledBorder: _commonBorder(),
-                    focusedBorder: _commonBorder(),
+                    border: border(),
+                    enabledBorder: border(),
+                    focusedBorder: border(),
                   ),
                 ),
                 containerBuilder: (context, popupWidget) {
@@ -147,14 +147,6 @@ class _RestaurantSearchState extends State<RestaurantSearch> {
           radius: screenWidth! * 0.0125,
         ),
       ),
-    );
-  }
-
-  OutlineInputBorder _commonBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(screenWidth! * 0.005),
-      borderSide: BorderSide(color: AppColors.primary.withOpacity(0.8)),
-      gapPadding: 0,
     );
   }
 }

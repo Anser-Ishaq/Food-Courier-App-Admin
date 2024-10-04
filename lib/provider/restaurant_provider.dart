@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:food_couriers_admin/models/restaurant.dart';
-import 'package:food_couriers_admin/services/database_service.dart';
+import 'package:food_couriers_admin/models/models.dart';
+import 'package:food_couriers_admin/services/services.dart';
 import 'package:get_it/get_it.dart';
 
 class RestaurantProvider with ChangeNotifier {
@@ -87,6 +87,7 @@ class RestaurantProvider with ChangeNotifier {
     bool? newActive,
     String? newShiftID,
     String? oldShiftID,
+    PlanType? newPlan,
   }) async {
     _setLoading(true);
     try {
@@ -110,6 +111,7 @@ class RestaurantProvider with ChangeNotifier {
         active: newActive,
         shiftID: newShiftID,
         deleteShiftID: oldShiftID,
+        plan: newPlan
       );
       fetchRestaurants();
       if (kDebugMode) print('Restaurant updated successfully!');

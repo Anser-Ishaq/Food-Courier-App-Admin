@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/constants/images/images.dart';
-import 'package:food_couriers_admin/constants/routes/routes.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/images/images.dart';
+import 'package:food_couriers_admin/res/routes/routes.dart';
 import 'package:food_couriers_admin/provider/userdata_provider.dart';
 import 'package:food_couriers_admin/screens/main/menu/side_menu.dart';
-import 'package:food_couriers_admin/screens/main/models/side_menu_model.dart';
+import 'package:food_couriers_admin/models/side_menu_model.dart';
 import 'package:food_couriers_admin/screens/main/widgets/header.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 

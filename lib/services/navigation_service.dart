@@ -1,14 +1,8 @@
-import 'package:food_couriers_admin/constants/routes/routes.dart';
-import 'package:food_couriers_admin/provider/auth_provider.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/add_restaurant/add_restaurant_screen.dart';
-import 'package:food_couriers_admin/screens/login/login_screen.dart';
-import 'package:food_couriers_admin/screens/main/body/dashboard/dashboard_body.dart';
-import 'package:food_couriers_admin/screens/main/body/finances/finances_body.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/edit_restaurant_screen.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/restaurant_body.dart';
-import 'package:food_couriers_admin/screens/main/body/support/support_body.dart';
-import 'package:food_couriers_admin/screens/main/body/users/users_body.dart';
-import 'package:food_couriers_admin/screens/main/main_screen.dart';
+import 'package:food_couriers_admin/provider/provider.dart';
+import 'package:food_couriers_admin/res/routes/routes.dart';
+import 'package:food_couriers_admin/screens/main/body/body.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/restaurants.dart';
+import 'package:food_couriers_admin/screens/screens.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/models/shift_model.dart';
-import 'package:food_couriers_admin/services/database_service.dart';
+import 'package:food_couriers_admin/models/models.dart';
+import 'package:food_couriers_admin/services/services.dart';
 import 'package:get_it/get_it.dart';
 
 class ShiftProvider with ChangeNotifier {

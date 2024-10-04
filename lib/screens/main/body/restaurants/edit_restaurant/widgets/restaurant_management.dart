@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/models/restaurant.dart';
-import 'package:food_couriers_admin/provider/ownerdata_provider.dart';
-import 'package:food_couriers_admin/provider/restaurant_provider.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_title_row.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/button_box.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/divider.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/phone_number_input.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/restaurant_details_text_field.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/save_button.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/sub_section.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/models/models.dart';
+import 'package:food_couriers_admin/provider/provider.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/widgets.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class RestaurantManagement extends StatefulWidget {

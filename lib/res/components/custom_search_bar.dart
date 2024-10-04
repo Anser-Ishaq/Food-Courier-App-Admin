@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
 
 
 class CustomSearchBar extends StatelessWidget {

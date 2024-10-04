@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:food_couriers_admin/services/auth_service.dart';
+import 'package:food_couriers_admin/services/services.dart';
 import 'package:get_it/get_it.dart';
 
 class AuthProvider with ChangeNotifier {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/screens/main/responsive/desktop_main.dart';
 import 'package:food_couriers_admin/screens/main/responsive/mobile_main.dart';
 import 'package:food_couriers_admin/screens/main/responsive/tablet_main.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 

@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:food_couriers_admin/models/shift_model.dart';
-import 'package:food_couriers_admin/models/user_model.dart';
-import 'package:food_couriers_admin/models/restaurant.dart';
+import 'package:food_couriers_admin/models/models.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
@@ -172,6 +170,7 @@ class DatabaseService {
     String? ownerPhone,
     String? shiftID,
     String? deleteShiftID,
+    PlanType? plan,
   }) async {
     try {
       Map<String, dynamic> data = {};
@@ -200,6 +199,7 @@ class DatabaseService {
       if (deleteShiftID != null) {
         data['shifts'] = FieldValue.arrayRemove([deleteShiftID]);
       }
+      if (plan != null) data['plan'] = plan.name;
 
       await _restaurantsCollection.doc(rid).update(data);
     } catch (e) {

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum PlanType { free, starter, pro }
+
 class Restaurant {
   String? rid;
   String? name;
@@ -21,6 +23,7 @@ class Restaurant {
   Timestamp? creationDate;
   bool active;
   List<String>? shifts;
+  PlanType? plan;
 
   Restaurant({
     this.rid,
@@ -43,6 +46,7 @@ class Restaurant {
     this.creationDate,
     this.active = true,
     this.shifts,
+    this.plan,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -66,8 +70,10 @@ class Restaurant {
       ownerPhone: json['ownerPhone'],
       creationDate: json['creationDate'],
       active: json['active'] ?? true,
-      shifts:
-          (json['shifts'] as List<dynamic>?)?.map((shift) => shift as String).toList(),
+      shifts: (json['shifts'] as List<dynamic>?)
+          ?.map((shift) => shift as String)
+          .toList(),
+      plan: json['plan'] != null ? PlanType.values.byName(json['plan']) : PlanType.free,
     );
   }
 
@@ -95,6 +101,7 @@ class Restaurant {
     }
     data['active'] = active;
     data['shifts'] = shifts;
+    data['plan'] = plan!.name;
     return data;
   }
 

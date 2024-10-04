@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/models/user_model.dart';
-import 'package:food_couriers_admin/provider/auth_provider.dart';
-import 'package:food_couriers_admin/services/database_service.dart';
+import 'package:food_couriers_admin/models/models.dart';
+import 'package:food_couriers_admin/services/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+
+import 'provider.dart';
 
 class UserdataProvider with ChangeNotifier {
   final GetIt _getIt = GetIt.instance;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
 import 'package:food_couriers_admin/screens/main/body/dashboard/widgets/orders_chart.dart';
 import 'package:food_couriers_admin/screens/main/body/dashboard/widgets/sales_chart.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 
 class DashboardBody extends StatefulWidget {
   const DashboardBody({

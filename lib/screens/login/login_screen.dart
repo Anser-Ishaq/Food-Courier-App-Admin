@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_couriers_admin/screens/login/reponsive/desktop_login.dart';
 import 'package:food_couriers_admin/screens/login/reponsive/mobile_login.dart';
 import 'package:food_couriers_admin/screens/login/reponsive/tablet_login.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class LoginScreen extends StatelessWidget {

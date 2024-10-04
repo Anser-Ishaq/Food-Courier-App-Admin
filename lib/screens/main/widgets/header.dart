@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/components/hover.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/components/components.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 import 'package:go_router/go_router.dart';
 
 class Header extends StatelessWidget {

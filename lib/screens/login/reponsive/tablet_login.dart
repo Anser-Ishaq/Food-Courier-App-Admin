@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:food_couriers_admin/components/gradient_text.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/constants/images/images.dart';
-import 'package:food_couriers_admin/constants/routes/routes.dart';
+import 'package:food_couriers_admin/res/components/gradient_text.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/images/images.dart';
+import 'package:food_couriers_admin/res/routes/routes.dart';
 import 'package:food_couriers_admin/provider/auth_provider.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 

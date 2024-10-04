@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
 import 'package:food_couriers_admin/firebase_options.dart';
 import 'package:food_couriers_admin/services/auth_service.dart';
 import 'package:food_couriers_admin/services/database_service.dart';

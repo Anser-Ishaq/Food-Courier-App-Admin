@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
 import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/button_box.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 
 class RestaurantHead extends StatelessWidget {
   const RestaurantHead({
     super.key,
     required this.showSearch,
     required this.onAddRestaurant,
+    required this.onExportCSV,
     required this.onSearchToggle,
   });
 
   final bool showSearch;
   final VoidCallback onAddRestaurant;
+  final VoidCallback onExportCSV;
   final VoidCallback onSearchToggle;
 
   @override
@@ -34,7 +36,7 @@ class RestaurantHead extends StatelessWidget {
             ButtonBox(
               title: 'Export CSV',
               isOutline: true,
-              onTap: () {},
+              onTap: onExportCSV,
             ),
             _buttonSearchToggle(
               onTap: onSearchToggle,

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/provider/restaurant_provider.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_tab_bar.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/location.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/plans.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/restaurant_management.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/working_hours.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/custom_progress_indicator.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/provider/provider.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/widgets.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/widgets.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class EditRestaurantScreen extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/components/hover.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
+import 'package:food_couriers_admin/res/components/components.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
 
 class RestaurantDetailsTextField extends StatefulWidget {
   const RestaurantDetailsTextField({
@@ -65,47 +65,49 @@ class _RestaurantDetailsTextFieldState
           ),
         ),
         SizedBox(height: screenWidth! * 0.0075),
-        Hover(builder: (hover) {
-          return TextFormField(
-            controller: widget.controller,
-            onSaved: widget.onSaved,
-            keyboardType: TextInputType.number,
-            style: TextStyle(
-              color: AppColors.textDarkColor,
-              fontFamily: 'DM Sans',
-              fontSize: screenWidth! * 0.0115,
-              fontWeight: FontWeight.w400,
-            ),
-            decoration: InputDecoration(
-              hintText: widget.title,
-              hintStyle: TextStyle(
-                color: AppColors.silver.withAlpha(140),
+        Hover(
+          builder: (hover) {
+            return TextFormField(
+              controller: widget.controller,
+              onSaved: widget.onSaved,
+              keyboardType: TextInputType.number,
+              style: TextStyle(
+                color: AppColors.textDarkColor,
+                fontFamily: 'DM Sans',
+                fontSize: screenWidth! * 0.0115,
+                fontWeight: FontWeight.w400,
               ),
-              // isCollapsed: true,
-              border: border(),
-              focusedBorder: border(),
-              enabledBorder: border(),
-              constraints: BoxConstraints(
-                maxHeight: screenWidth! * 0.03,
-                minHeight: screenWidth! * 0.03,
+              decoration: InputDecoration(
+                hintText: widget.title,
+                hintStyle: TextStyle(
+                  color: AppColors.silver.withAlpha(140),
+                ),
+                // isCollapsed: true,
+                border: border(),
+                focusedBorder: border(),
+                enabledBorder: border(),
+                constraints: BoxConstraints(
+                  maxHeight: screenWidth! * 0.03,
+                  minHeight: screenWidth! * 0.03,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: screenWidth! * 0.01,
+                  vertical: screenWidth! * 0.01,
+                ),
+                suffixIcon: widget.showIncrementDecrement && hover
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildIncrementDecrementButton(isIncrement: true),
+                          _buildIncrementDecrementButton(isIncrement: false),
+                        ],
+                      )
+                    : null,
               ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: screenWidth! * 0.01,
-                vertical: screenWidth! * 0.01,
-              ),
-              suffixIcon: widget.showIncrementDecrement && hover
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildIncrementDecrementButton(isIncrement: true),
-                        _buildIncrementDecrementButton(isIncrement: false),
-                      ],
-                    )
-                  : null,
-            ),
-          );
-        }),
+            );
+          },
+        ),
       ],
     );
   }
@@ -135,5 +137,4 @@ class _RestaurantDetailsTextFieldState
       );
     });
   }
-
 }

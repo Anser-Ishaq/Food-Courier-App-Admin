@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:food_couriers_admin/models/restaurant.dart';
-import 'package:food_couriers_admin/models/shift_model.dart';
-import 'package:food_couriers_admin/provider/restaurant_provider.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_tab_bar.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/custom_title_row.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/button_box.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/custom_progress_indicator.dart';
-import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/save_button.dart';
-import 'package:food_couriers_admin/utils.dart';
+import 'package:food_couriers_admin/models/models.dart';
+import 'package:food_couriers_admin/provider/provider.dart';
+import 'package:food_couriers_admin/res/utils/utils.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/edit_restaurant/widgets/widgets.dart';
+import 'package:food_couriers_admin/screens/main/body/restaurants/widgets/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:food_couriers_admin/constants/colors/app_colors.dart';
-import 'package:food_couriers_admin/provider/shift_provider.dart';
+import 'package:food_couriers_admin/res/colors/app_colors.dart';
 
 class WorkingHours extends StatefulWidget {
   const WorkingHours({
